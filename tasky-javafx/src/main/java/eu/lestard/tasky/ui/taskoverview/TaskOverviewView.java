@@ -1,4 +1,4 @@
-package eu.lestard.tasky.taskoverview;
+package eu.lestard.tasky.ui.taskoverview;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;

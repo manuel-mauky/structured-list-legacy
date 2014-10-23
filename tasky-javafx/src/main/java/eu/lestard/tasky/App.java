@@ -2,9 +2,9 @@ package eu.lestard.tasky;
 
 import de.saxsys.mvvmfx.FluentViewLoader;
 import de.saxsys.mvvmfx.cdi.MvvmfxCdiApplication;
-import eu.lestard.tasky.taskoverview.TaskOverviewView;
-import eu.lestard.tasky.model.TasksModel;
 import eu.lestard.tasky.model.Task;
+import eu.lestard.tasky.model.TasksModel;
+import eu.lestard.tasky.ui.main.MainView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -34,7 +34,7 @@ public class App extends MvvmfxCdiApplication{
         tasksModel.addTasks(t1, t2, t3, t11, t12, t121);
 
 
-        final Parent root = FluentViewLoader.fxmlView(TaskOverviewView.class).load().getView();
+        final Parent root = FluentViewLoader.fxmlView(MainView.class).load().getView();
 
         stage.setScene(new Scene(root));
         stage.sizeToScene();

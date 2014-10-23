@@ -1,4 +1,4 @@
-package eu.lestard.tasky.taskoverview;
+package eu.lestard.tasky.ui.taskoverview;
 
 import de.saxsys.mvvmfx.ViewModel;
 import eu.lestard.tasky.model.TasksModel;

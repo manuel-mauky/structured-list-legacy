@@ -1,4 +1,4 @@
-package eu.lestard.tasky.taskoverview;
+package eu.lestard.tasky.ui.taskoverview;
 
 import eu.lestard.tasky.model.Task;
 import javafx.beans.property.ReadOnlyStringProperty;
