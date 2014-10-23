@@ -6,7 +6,7 @@ import javafx.collections.ObservableList;
 import javax.inject.Singleton;
 
 @Singleton
-public class Model {
+public class TasksModel {
 
     private ObservableList<Task> tasks = FXCollections.observableArrayList();
 

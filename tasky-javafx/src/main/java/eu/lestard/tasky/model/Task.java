@@ -20,6 +20,7 @@ public class Task {
     }
 
     public Task(String text){
+        this();
         this.setText(text);
     }
 
