@@ -7,7 +7,11 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.UUID;
+
 public class Task {
+
+    private String id;
 
     private StringProperty text = new SimpleStringProperty();
 
@@ -16,6 +20,7 @@ public class Task {
     private ObservableList<Task> subTasks = FXCollections.observableArrayList();
 
     public Task(){
+        id = UUID.randomUUID().toString();
         title.bind(text); // todo: replace with logic to extract only the first line of the text as title
     }
 
@@ -52,4 +57,13 @@ public class Task {
         this.text.set(text);
     }
 
+    public String getId(){
+        return id;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Task[title='" + getTitle() + "']";
+    }
 }

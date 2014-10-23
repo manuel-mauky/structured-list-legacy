@@ -11,10 +11,14 @@ public class TreeTableViewModel {
 
     private ReadOnlyStringWrapper title = new ReadOnlyStringWrapper();
 
+    private String id;
+
     TreeTableViewModel(){
+        id = "";
     }
 
     TreeTableViewModel(Task task){
+        id = task.getId();
         title.bind(task.titleProperty());
     }
 
@@ -22,4 +26,17 @@ public class TreeTableViewModel {
         return title;
     }
 
+    public String getId(){
+        return id;
+    }
+
+    public String getTitle(){
+        return title.get();
+    }
+
+
+    @Override
+    public String toString() {
+        return "TreeItem[title='" + getTitle() + "']";
+    }
 }
