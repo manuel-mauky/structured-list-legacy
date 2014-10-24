@@ -27,12 +27,18 @@ public class App extends MvvmfxCdiApplication{
         Task t1 = new Task("Task 1");
         Task t2 = new Task("Task 2");
         Task t3 = new Task("Task 3");
+
+        tasksModel.getRoot().getSubTasks().addAll(t1,t2,t3);
+
+
         Task t11 = new Task("Task 1 - 1");
+        t1.getSubTasks().add(t11);
+
         Task t12 = new Task("Task 1 - 2");
+        t1.getSubTasks().add(t12);
+
         Task t121 = new Task("Task 1 - 2 - 1");
-
-        tasksModel.addTasks(t1, t2, t3, t11, t12, t121);
-
+        t12.getSubTasks().add(t121);
 
         final Parent root = FluentViewLoader.fxmlView(MainView.class).load().getView();
 

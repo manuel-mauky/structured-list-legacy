@@ -26,7 +26,7 @@ public class TaskOverviewViewModelTest {
 
         TasksModel modelMock = mock(TasksModel.class);
 
-        when(modelMock.tasksProperty()).thenReturn(rootTaskList);
+//        when(modelMock.tasksProperty()).thenReturn(rootTaskList);
 
         viewModel = new TaskOverviewViewModel();
         viewModel.tasksModel = modelMock;
