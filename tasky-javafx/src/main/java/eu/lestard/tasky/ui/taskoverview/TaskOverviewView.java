@@ -26,6 +26,8 @@ public class TaskOverviewView implements FxmlView<TaskOverviewViewModel> {
         taskTreeView.setShowRoot(false);
 
         titleColumn.setCellValueFactory(param -> param.getValue().getValue().titleProperty());
+
+        viewModel.selectedTaskProperty().bind(taskTreeView.getSelectionModel().selectedItemProperty());
     }
 
 }
