@@ -13,33 +13,30 @@ import java.util.stream.Collectors;
 
 public class TaskOverviewViewModel implements ViewModel {
 
-    private TreeItem<TreeTableViewModel> rootNode;
+    private TreeItem<Task> rootNode;
 
     @Inject
     TasksModel tasksModel;
 
     public TaskOverviewViewModel(){
-        rootNode = new TreeItem<>(new TreeTableViewModel());
+        rootNode = new TreeItem<>(new Task("root"));
     }
 
     @PostConstruct
     void init(){
-        tasksModel.tasksProperty().forEach(task->rootNode.getChildren().add(new TreeItem<>(new TreeTableViewModel(task))));
+        tasksModel.tasksProperty().forEach(task->rootNode.getChildren().add(new TreeItem<>(task)));
 
         tasksModel.tasksProperty().addListener((ListChangeListener<Task>) change -> {
             while(change.next()) {
 
                 if (change.wasAdded()) {
                     change.getAddedSubList().forEach(newTask -> 
-                        rootNode.getChildren().add(new TreeItem<>(new TreeTableViewModel(newTask))));
+                        rootNode.getChildren().add(new TreeItem<>(newTask)));
                 }
 
                 if (change.wasRemoved()) {
-                    final List<String> idsToRemove = change.getRemoved().stream().map(Task::getId).collect(Collectors.toList());
 
-                    final List<TreeItem<TreeTableViewModel>> treeItemsToRemove = rootNode.getChildren().stream()
-                        .filter(treeItem -> idsToRemove.contains(treeItem.getValue().getId()))
-                        .collect(Collectors.toList());
+                    final List<TreeItem<Task>> treeItemsToRemove = rootNode.getChildren().stream().filter(treeItem -> change.getRemoved().contains(treeItem.getValue())).collect(Collectors.toList());
 
                     rootNode.getChildren().removeAll(treeItemsToRemove);
                 }
@@ -48,7 +45,7 @@ public class TaskOverviewViewModel implements ViewModel {
     }
 
 
-    public TreeItem<TreeTableViewModel> getRootNode(){
+    public TreeItem<Task> getRootNode(){
         return rootNode;
     }
 

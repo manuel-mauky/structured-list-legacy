@@ -2,6 +2,7 @@ package eu.lestard.tasky.ui.taskoverview;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import eu.lestard.tasky.model.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
@@ -10,10 +11,10 @@ public class TaskOverviewView implements FxmlView<TaskOverviewViewModel> {
 
 
     @FXML
-    private TreeTableView<TreeTableViewModel> taskTreeView;
+    private TreeTableView<Task> taskTreeView;
 
     @FXML
-    private TreeTableColumn<TreeTableViewModel, String> titleColumn;
+    private TreeTableColumn<Task, String> titleColumn;
 
     @InjectViewModel
     private TaskOverviewViewModel viewModel;
