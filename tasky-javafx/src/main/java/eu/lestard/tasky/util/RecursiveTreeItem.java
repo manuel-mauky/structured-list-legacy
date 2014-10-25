@@ -6,6 +6,9 @@ import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.util.Callback;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class RecursiveTreeItem<T> extends TreeItem<T> {
 
     private Callback<T, ObservableList<T>> childrenFactory;
@@ -44,6 +47,14 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
 
                 if(change.wasAdded()){
                     change.getAddedSubList().forEach(t-> RecursiveTreeItem.this.getChildren().add(new RecursiveTreeItem<>(t, getGraphic(), childrenFactory)));
+                }
+
+                if(change.wasRemoved()){
+                    change.getRemoved().forEach(t->{
+                        final List<TreeItem<T>> itemsToRemove = RecursiveTreeItem.this.getChildren().stream().filter(treeItem -> treeItem.getValue().equals(t)).collect(Collectors.toList());
+
+                        RecursiveTreeItem.this.getChildren().removeAll(itemsToRemove);
+                    });
                 }
 
             }

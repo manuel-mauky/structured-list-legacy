@@ -88,7 +88,7 @@ public class RecursiveTreeItemTest {
 
 
     @Test
-    public void testValueIsAddedAfterConstructor(){
+    public void testElementIsAddedAfterConstructor(){
         Task root = new Task("root");
 
         root.addSubTask("sub1");
@@ -100,10 +100,41 @@ public class RecursiveTreeItemTest {
 
         rootItem.setValue(root);
         assertThat(rootItem.getChildren()).hasSize(2);
-
-
     }
 
+    @Test
+    public void testTreeItemIsRemovedWhenElementIsRemoved(){
 
+        Task root = new Task("root");
+
+        Task sub1 = new Task("sub1");
+        root.getSubTasks().add(sub1);
+
+        Task sub1_2 = new Task("sub1_2");
+        sub1.getSubTasks().add(sub1_2);
+
+        Task sub2 = new Task("sub2");
+        root.getSubTasks().add(sub2);
+
+        Task sub2_1 = new Task("sub2_1");
+        Task sub2_2 = new Task("sub2_2");
+        sub2.getSubTasks().addAll(sub2_1, sub2_2);
+
+
+        RecursiveTreeItem<Task> treeRoot = new RecursiveTreeItem<>(root, Task::getSubTasks);
+
+        final TreeItem<Task> treeSub1 = treeRoot.getChildren().get(0);
+        assertThat(treeSub1.getChildren()).hasSize(1);
+
+        sub1.getSubTasks().remove(sub1_2);
+        assertThat(treeSub1.getChildren()).isEmpty();
+
+
+        assertThat(treeRoot.getChildren()).hasSize(2);
+
+        root.getSubTasks().remove(sub2);
+        assertThat(treeRoot.getChildren()).hasSize(1);
+
+    }
 
 }
