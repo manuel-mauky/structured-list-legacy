@@ -14,4 +14,10 @@ public class MenuView implements FxmlView<MenuViewModel> {
         viewModel.newTask();
     }
 
+
+    @FXML
+    public void removeTask(){
+        viewModel.removeTask();
+    }
+
 }

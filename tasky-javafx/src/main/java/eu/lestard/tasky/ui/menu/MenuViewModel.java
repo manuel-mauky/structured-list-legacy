@@ -8,11 +8,19 @@ import javax.inject.Inject;
 public class MenuViewModel implements ViewModel {
 
     @Inject
-    private TaskOverviewViewModel taskOverviewViewModel;
+    TaskOverviewViewModel taskOverviewViewModel;
 
     public void newTask(){
         taskOverviewViewModel.getSelectedTask().ifPresent(task -> {
             task.addSubTask("New Task");
         });
+    }
+
+    public void removeTask() {
+        taskOverviewViewModel.getSelectedTask()
+            .ifPresent(task ->
+                task.getParent().ifPresent(
+                    parent->
+                        parent.getSubTasks().remove(task)));
     }
 }

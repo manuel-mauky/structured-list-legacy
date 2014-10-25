@@ -11,6 +11,7 @@
             <Menu mnemonicParsing="false" text="Tasks">
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#newTask" text="New Task" />
+                  <MenuItem mnemonicParsing="false" onAction="#removeTask" text="Remove Task" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" text="Preferences…" />
                   <SeparatorMenuItem mnemonicParsing="false" />
