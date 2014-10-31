@@ -20,15 +20,12 @@ public class Item {
     private StringProperty text = new SimpleStringProperty();
     private Item parent;
 
-    private ReadOnlyStringWrapper title = new ReadOnlyStringWrapper();
-
     private ReadOnlyIntegerWrapper recursiveNumberOfAllSubItems = new ReadOnlyIntegerWrapper(0);
 
     private ObservableList<Item> subItems = FXCollections.observableArrayList();
 
     public Item(){
         id = UUID.randomUUID().toString();
-        title.bind(text); // todo: replace with logic to extract only the first line of the text as title
 
         final ObservableList<ReadOnlyIntegerProperty> numbersOfAllSubItems = EasyBind.map(subItems, Item::recursiveNumberOfAllSubItems);
 
@@ -81,14 +78,6 @@ public class Item {
         return subItems;
     }
 
-    public String getTitle(){
-        return title.get();
-    }
-
-    public ReadOnlyStringProperty titleProperty(){
-        return title.getReadOnlyProperty();
-    }
-
     public String getText() {
         return text.get();
     }
@@ -119,6 +108,6 @@ public class Item {
 
     @Override
     public String toString() {
-        return "Item[title='" + getTitle() + "']";
+        return "Item[title='" + getText() + "']";
     }
 }

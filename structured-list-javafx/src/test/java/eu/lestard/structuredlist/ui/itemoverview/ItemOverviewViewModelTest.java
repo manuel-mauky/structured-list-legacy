@@ -54,8 +54,8 @@ public class ItemOverviewViewModelTest {
         final ObservableList<TreeItem<Item>> treeItems = rootNode.getChildren();
         assertThat(treeItems).hasSize(2);
 
-        assertThat(treeItems.get(0).getValue().getTitle()).isEqualTo("test 1");
-        assertThat(treeItems.get(1).getValue().getTitle()).isEqualTo("test 2");
+        assertThat(treeItems.get(0).getValue().getText()).isEqualTo("test 1");
+        assertThat(treeItems.get(1).getValue().getText()).isEqualTo("test 2");
 
 
         assertThat(treeItems.get(0).getChildren()).isEmpty();
@@ -71,13 +71,13 @@ public class ItemOverviewViewModelTest {
         final ObservableList<TreeItem<Item>> treeItems = viewModel.getRootNode().getChildren();
 
         assertThat(treeItems).hasSize(1);
-        assertThat(treeItems.get(0).getValue().getTitle()).isEqualTo("test 1");
+        assertThat(treeItems.get(0).getValue().getText()).isEqualTo("test 1");
 
 
         rootItem.addSubTask("test 2");
         assertThat(treeItems).hasSize(2);
-        assertThat(treeItems.get(0).getValue().getTitle()).isEqualTo("test 1");
-        assertThat(treeItems.get(1).getValue().getTitle()).isEqualTo("test 2");
+        assertThat(treeItems.get(0).getValue().getText()).isEqualTo("test 1");
+        assertThat(treeItems.get(1).getValue().getText()).isEqualTo("test 2");
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ItemOverviewViewModelTest {
         rootItem.getSubItems().remove(0);
 
         assertThat(treeItems).hasSize(1);
-        assertThat(treeItems.get(0).getValue().getTitle()).isEqualTo("test 2");
+        assertThat(treeItems.get(0).getValue().getText()).isEqualTo("test 2");
     }
 
 
@@ -115,7 +115,7 @@ public class ItemOverviewViewModelTest {
 
 
     private List<String> getItemTitles(List<TreeItem<Item>> treeItems){
-        return treeItems.stream().map(item -> item.getValue().getTitle()).collect(Collectors.toList());
+        return treeItems.stream().map(item -> item.getValue().getText()).collect(Collectors.toList());
     }
 
 }
