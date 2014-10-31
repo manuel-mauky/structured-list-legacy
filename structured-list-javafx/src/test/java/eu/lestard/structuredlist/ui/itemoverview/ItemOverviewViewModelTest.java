@@ -2,7 +2,6 @@ package eu.lestard.structuredlist.ui.itemoverview;
 
 import eu.lestard.structuredlist.model.Item;
 import eu.lestard.structuredlist.model.ItemsModel;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.junit.Before;
@@ -18,13 +17,13 @@ public class ItemOverviewViewModelTest {
 
     private ItemOverviewViewModel viewModel;
 
-    private ObservableList<Item> rootItemList;
+    private Item rootItem;
 
     @Before
     public void setup(){
-        rootItemList = FXCollections.observableArrayList();
-
+        rootItem = new Item("root");
         ItemsModel modelMock = mock(ItemsModel.class);
+        when(modelMock.getRoot()).thenReturn(rootItem);
 
         viewModel = new ItemOverviewViewModel();
         viewModel.itemsModel = modelMock;
@@ -32,7 +31,7 @@ public class ItemOverviewViewModelTest {
 
     @Test
     public void rootTreeItemIsEmptyWhenNoItemsAreAvailableOnInit(){
-        assertThat(rootItemList).isEmpty();
+        assertThat(rootItem.getSubItems()).isEmpty();
         viewModel.init();
 
         final TreeItem<Item> rootNode = viewModel.getRootNode();
@@ -43,8 +42,8 @@ public class ItemOverviewViewModelTest {
 
     @Test
     public void rootTreeItemIsFilledWhenItemsAreAvailableOnInit(){
-        rootItemList.add(new Item("test 1"));
-        rootItemList.add(new Item("test 2"));
+        rootItem.addSubTask("test 1");
+        rootItem.addSubTask("test 2");
 
         viewModel.init();
 
@@ -65,7 +64,7 @@ public class ItemOverviewViewModelTest {
 
     @Test
     public void treeItemsAreAddedWhenItemsAreAdded(){
-        rootItemList.add(new Item("test 1"));
+        rootItem.addSubTask("test 1");
 
         viewModel.init();
 
@@ -75,7 +74,7 @@ public class ItemOverviewViewModelTest {
         assertThat(treeItems.get(0).getValue().getTitle()).isEqualTo("test 1");
 
 
-        rootItemList.add(new Item("test 2"));
+        rootItem.addSubTask("test 2");
         assertThat(treeItems).hasSize(2);
         assertThat(treeItems.get(0).getValue().getTitle()).isEqualTo("test 1");
         assertThat(treeItems.get(1).getValue().getTitle()).isEqualTo("test 2");
@@ -83,8 +82,8 @@ public class ItemOverviewViewModelTest {
 
     @Test
     public void treeItemsAreRemovedWhenItemsAreRemoved(){
-        rootItemList.add(new Item("test 1"));
-        rootItemList.add(new Item("test 2"));
+        rootItem.addSubTask("test 1");
+        rootItem.addSubTask("test 2");
 
         viewModel.init();
 
@@ -92,7 +91,7 @@ public class ItemOverviewViewModelTest {
 
         assertThat(treeItems).hasSize(2);
 
-        rootItemList.remove(0);
+        rootItem.getSubItems().remove(0);
 
         assertThat(treeItems).hasSize(1);
         assertThat(treeItems.get(0).getValue().getTitle()).isEqualTo("test 2");
@@ -101,8 +100,8 @@ public class ItemOverviewViewModelTest {
 
     @Test
     public void treeItemsAreUpdatedWhenItemsAreReplaced(){
-        rootItemList.add(new Item("test 1"));
-        rootItemList.add(new Item("test 2"));
+        rootItem.addSubTask("test 1");
+        rootItem.addSubTask("test 2");
 
 
         viewModel.init();
@@ -110,7 +109,7 @@ public class ItemOverviewViewModelTest {
         final ObservableList<TreeItem<Item>> treeItems = viewModel.getRootNode().getChildren();
         assertThat(getItemTitles(treeItems)).contains("test 1");
 
-        rootItemList.set(0, new Item("other text"));
+        rootItem.getSubItems().set(0, new Item("other text"));
         assertThat(getItemTitles(treeItems)).contains("other text").doesNotContain("test 1");
     }
 

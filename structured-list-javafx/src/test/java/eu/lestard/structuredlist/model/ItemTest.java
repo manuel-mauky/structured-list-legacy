@@ -3,6 +3,7 @@ package eu.lestard.structuredlist.model;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static eu.lestard.assertj.javafx.api.Assertions.assertThat;
 
 public class ItemTest {
 
@@ -39,5 +40,43 @@ public class ItemTest {
 
         root.getSubItems().remove(sub1);
         assertThat(sub1.getParent().isPresent()).isFalse();
+    }
+
+    @Test
+    public void testRecursiveNumberOfAllSubItems(){
+        Item root = new Item("root");
+        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(0);
+
+        Item sub1 = new Item("sub1");
+        root.getSubItems().add(sub1);
+
+        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(1);
+
+
+        Item sub2 = new Item("sub2");
+        root.getSubItems().add(sub2);
+        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(2);
+
+
+        Item sub2_1 = new Item("sub2_1");
+        sub2.getSubItems().add(sub2_1);
+        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(3);
+
+        Item sub2_2 = new Item("sub2_2");
+        sub2.getSubItems().add(sub2_2);
+        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(4);
+
+        Item sub2_3 = new Item("sub2_3");
+        sub2.getSubItems().add(sub2_3);
+        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(5);
+
+
+        Item sub2_3_1 = new Item("sub2_3_1");
+        sub2_3.getSubItems().add(sub2_3_1);
+        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(6);
+
+
+        sub2.getSubItems().remove(sub2_3);
+        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(4);
     }
 }

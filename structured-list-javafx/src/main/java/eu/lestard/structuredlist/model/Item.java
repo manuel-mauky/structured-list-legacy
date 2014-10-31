@@ -1,15 +1,17 @@
 package eu.lestard.structuredlist.model;
 
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import org.fxmisc.easybind.EasyBind;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static eu.lestard.advanced_bindings.api.NumberBindings.*;
 
 public class Item {
 
@@ -20,22 +22,32 @@ public class Item {
 
     private ReadOnlyStringWrapper title = new ReadOnlyStringWrapper();
 
+    private ReadOnlyIntegerWrapper recursiveNumberOfAllSubItems = new ReadOnlyIntegerWrapper(0);
+
     private ObservableList<Item> subItems = FXCollections.observableArrayList();
 
     public Item(){
         id = UUID.randomUUID().toString();
         title.bind(text); // todo: replace with logic to extract only the first line of the text as title
 
+        final ObservableList<ReadOnlyIntegerProperty> numbersOfAllSubItems = EasyBind.map(subItems, Item::recursiveNumberOfAllSubItems);
+
+        final ObservableValue<Number> sum = EasyBind.combine(numbersOfAllSubItems, stream -> stream.reduce(
+            (a, b) ->
+                a.intValue() + b.intValue()).orElse(0));
+
+        recursiveNumberOfAllSubItems.bind(Bindings.size(subItems).add(asDouble(sum)));
+
         subItems.addListener((ListChangeListener<Item>) change -> {
-            while(change.next()){
-                if(change.wasAdded()){
-                    change.getAddedSubList().forEach(item->{
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    change.getAddedSubList().forEach(item -> {
                         item.setParent(Item.this);
                     });
                 }
 
-                if(change.wasRemoved()){
-                    change.getRemoved().forEach(item->{
+                if (change.wasRemoved()) {
+                    change.getRemoved().forEach(item -> {
                         item.setParent(null);
                     });
                 }
@@ -46,6 +58,18 @@ public class Item {
     public Item(String text){
         this();
         this.setText(text);
+    }
+
+    /**
+     * This read-only property represents the recursive number of all sub items.
+     * Example: This item has 3 sub-items and each of these sub-items itself has 2 sub-items.
+     * Then this property will have the value 9 (3 + 3*2).
+     *
+     *
+     * @return the recursive number of all sub items.
+     */
+    public ReadOnlyIntegerProperty recursiveNumberOfAllSubItems(){
+        return recursiveNumberOfAllSubItems.getReadOnlyProperty();
     }
 
 
