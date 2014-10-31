@@ -17,20 +17,25 @@ public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
     @FXML
     private TreeTableColumn<Item, String> titleColumn;
 
+    @FXML
+    private TreeTableColumn<Item, Integer> itemsColumn;
+
     @InjectViewModel
     private ItemOverviewViewModel viewModel;
 
 
-    public void initialize(){
+    public void initialize() {
 
         itemTreeView.setRoot(viewModel.getRootNode());
-        itemTreeView.setShowRoot(false);
 
         titleColumn.setCellValueFactory(param -> {
             final Item item = param.getValue().getValue();
 
             return Bindings.concat(item.textProperty(), "(", item.recursiveNumberOfAllSubItems(), ")");
         });
+
+        itemsColumn.setCellValueFactory(param ->
+            param.getValue().getValue().recursiveNumberOfAllSubItems().asObject());
 
         viewModel.selectedItemProperty().bind(itemTreeView.getSelectionModel().selectedItemProperty());
     }
