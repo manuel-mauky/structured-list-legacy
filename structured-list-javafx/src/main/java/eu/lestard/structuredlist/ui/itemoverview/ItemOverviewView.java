@@ -25,7 +25,6 @@ public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
 
 
     public void initialize() {
-
         itemTreeView.setRoot(viewModel.getRootNode());
 
         titleColumn.setCellValueFactory(param -> {
@@ -38,6 +37,14 @@ public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
             param.getValue().getValue().recursiveNumberOfAllSubItems().asObject());
 
         viewModel.selectedItemProperty().bind(itemTreeView.getSelectionModel().selectedItemProperty());
+    }
+
+    public void addItem(){
+        viewModel.addItem();
+    }
+
+    public void removeItem(){
+        viewModel.removeItem();
     }
 
 }

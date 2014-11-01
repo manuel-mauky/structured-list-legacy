@@ -48,4 +48,11 @@ public class ItemOverviewViewModel implements ViewModel {
         }
         return Optional.empty();
     }
+
+    public void addItem(){
+    }
+
+    public void removeItem(){
+        getSelectedItem().ifPresent(Item::remove);
+    }
 }

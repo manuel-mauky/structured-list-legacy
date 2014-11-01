@@ -17,6 +17,14 @@
          <columnResizePolicy>
             <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
+         <contextMenu>
+            <ContextMenu>
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#addItem" text="Add Item" />
+                  <MenuItem mnemonicParsing="false" onAction="#removeItem" text="Remove Item" />
+              </items>
+            </ContextMenu>
+         </contextMenu>
       </TreeTableView>
    </children>
 </AnchorPane>

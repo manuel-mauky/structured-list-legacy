@@ -69,6 +69,11 @@ public class Item {
         return recursiveNumberOfAllSubItems.getReadOnlyProperty();
     }
 
+    public void remove(){
+        this.getParent().ifPresent(parent->{
+            parent.getSubItems().remove(this);
+        });
+    }
 
     public void addSubTask(String text){
         subItems.add(new Item(text));

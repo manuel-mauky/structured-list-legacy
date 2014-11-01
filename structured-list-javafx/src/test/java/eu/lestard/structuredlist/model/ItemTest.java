@@ -79,4 +79,25 @@ public class ItemTest {
         sub2.getSubItems().remove(sub2_3);
         assertThat(root.recursiveNumberOfAllSubItems()).hasValue(4);
     }
+
+    @Test
+    public void testRemove(){
+        Item root = new Item("root");
+
+        Item sub1 = new Item("sub1");
+        root.getSubItems().add(sub1);
+
+        Item sub2 = new Item("sub2");
+        root.getSubItems().add(sub2);
+
+        assertThat(root.getSubItems()).contains(sub1, sub2);
+        assertThat(sub1.getParent().get()).isEqualTo(root);
+
+
+
+        sub1.remove();
+        assertThat(root.getSubItems()).contains(sub2).doesNotContain(sub1);
+        assertThat(sub1.getParent().isPresent()).isFalse();
+
+    }
 }
