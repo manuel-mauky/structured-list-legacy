@@ -52,10 +52,10 @@ public class ItemOverviewViewModel implements ViewModel {
         return Optional.empty();
     }
 
-    public void addItem(Optional<String> result){
-        result.ifPresent(text->
+    public void addItem(Optional<String> dialogText){
+        dialogText.ifPresent(text ->
             getSelectedItem().ifPresent(
-                item->
+                item ->
                     item.addSubTask(text)));
     }
 

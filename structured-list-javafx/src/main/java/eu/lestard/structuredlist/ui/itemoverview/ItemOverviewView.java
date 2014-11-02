@@ -4,9 +4,7 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import eu.lestard.structuredlist.model.Item;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
+import javafx.scene.control.*;
 
 public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
 
@@ -46,7 +44,16 @@ public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
     }
 
     public void removeItem(){
-        viewModel.removeItem();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Remove Item");
+        alert.setHeaderText("Remove the selected Item");
+        alert.setContentText("Do you really want to remove the selected Item?");
+
+        alert.showAndWait().ifPresent(button->{
+            if(button.equals(ButtonType.OK)){
+                viewModel.removeItem();
+            }
+        });
     }
 
 }
