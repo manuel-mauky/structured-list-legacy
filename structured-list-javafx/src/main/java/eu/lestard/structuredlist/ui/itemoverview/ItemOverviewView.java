@@ -3,7 +3,6 @@ package eu.lestard.structuredlist.ui.itemoverview;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import eu.lestard.structuredlist.model.Item;
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
@@ -27,14 +26,13 @@ public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
     public void initialize() {
         itemTreeView.setRoot(viewModel.getRootNode());
 
-        titleColumn.setCellValueFactory(param -> {
-            final Item item = param.getValue().getValue();
-
-            return Bindings.concat(item.textProperty(), "(", item.recursiveNumberOfAllSubItems(), ")");
-        });
+        titleColumn.setCellValueFactory(param ->
+            ItemOverviewViewModel.createTitleColumnBinding(
+                param.getValue().getValue()));
 
         itemsColumn.setCellValueFactory(param ->
-            param.getValue().getValue().recursiveNumberOfAllSubItems().asObject());
+            ItemOverviewViewModel.createItemsColumnBinding(
+                param.getValue().getValue()));
 
         viewModel.selectedItemProperty().bind(itemTreeView.getSelectionModel().selectedItemProperty());
     }

@@ -4,8 +4,11 @@ import de.saxsys.mvvmfx.ViewModel;
 import eu.lestard.structuredlist.model.Item;
 import eu.lestard.structuredlist.model.ItemsModel;
 import eu.lestard.structuredlist.util.RecursiveTreeItem;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
 
 import javax.annotation.PostConstruct;
@@ -54,5 +57,13 @@ public class ItemOverviewViewModel implements ViewModel {
 
     public void removeItem(){
         getSelectedItem().ifPresent(Item::remove);
+    }
+
+    public static ObservableStringValue createTitleColumnBinding(Item item){
+        return Bindings.concat(item.textProperty(), "(", item.recursiveNumberOfAllSubItems(), ")");
+    }
+
+    public static ObservableValue<Integer> createItemsColumnBinding(Item item){
+        return item.recursiveNumberOfAllSubItems().asObject();
     }
 }
