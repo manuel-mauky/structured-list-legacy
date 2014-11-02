@@ -52,7 +52,11 @@ public class ItemOverviewViewModel implements ViewModel {
         return Optional.empty();
     }
 
-    public void addItem(){
+    public void addItem(Optional<String> result){
+        result.ifPresent(text->
+            getSelectedItem().ifPresent(
+                item->
+                    item.addSubTask(text)));
     }
 
     public void removeItem(){
@@ -60,7 +64,7 @@ public class ItemOverviewViewModel implements ViewModel {
     }
 
     public static ObservableStringValue createTitleColumnBinding(Item item){
-        return Bindings.concat(item.textProperty(), "(", item.recursiveNumberOfAllSubItems(), ")");
+        return Bindings.concat(item.textProperty(), " (", item.recursiveNumberOfAllSubItems(), ")");
     }
 
     public static ObservableValue<Integer> createItemsColumnBinding(Item item){

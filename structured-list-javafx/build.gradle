@@ -19,6 +19,8 @@ dependencies {
     compile 'org.fxmisc.easybind:easybind:1.0.3'
     compile 'eu.lestard:advanced-bindings:0.3.0-SNAPSHOT'
 
+    compile 'org.controlsfx:openjfx-dialogs:1.0.2'
+
     // testing
     testCompile "junit:junit:4.11"
     testCompile "org.assertj:assertj-core:1.7.0"

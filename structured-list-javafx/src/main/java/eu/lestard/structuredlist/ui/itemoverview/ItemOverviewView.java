@@ -4,6 +4,7 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import eu.lestard.structuredlist.model.Item;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 
@@ -38,7 +39,10 @@ public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
     }
 
     public void addItem(){
-        viewModel.addItem();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Add new Item");
+        dialog.setHeaderText(null);
+        viewModel.addItem(dialog.showAndWait());
     }
 
     public void removeItem(){

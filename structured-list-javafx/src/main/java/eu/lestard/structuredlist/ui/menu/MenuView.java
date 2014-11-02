@@ -3,6 +3,7 @@ package eu.lestard.structuredlist.ui.menu;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextInputDialog;
 
 public class MenuView implements FxmlView<MenuViewModel> {
 
@@ -11,13 +12,10 @@ public class MenuView implements FxmlView<MenuViewModel> {
 
     @FXML
     public void newItem(){
-        viewModel.newItem();
-    }
-
-
-    @FXML
-    public void removeItem(){
-        viewModel.removeItem();
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Add new Item");
+        dialog.setHeaderText(null);
+        viewModel.newItem(dialog.showAndWait());
     }
 
 }
