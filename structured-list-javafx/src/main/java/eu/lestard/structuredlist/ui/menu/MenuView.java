@@ -18,4 +18,8 @@ public class MenuView implements FxmlView<MenuViewModel> {
         viewModel.newItem(dialog.showAndWait());
     }
 
+    @FXML
+    public void exit(){
+        viewModel.exit();
+    }
 }
