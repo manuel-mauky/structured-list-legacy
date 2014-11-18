@@ -1,0 +1,9 @@
+
+subprojects {
+  group = "eu.lestard"
+  version = "0.1.0"
+
+  repositories {
+      mavenCentral()
+  }
+}
