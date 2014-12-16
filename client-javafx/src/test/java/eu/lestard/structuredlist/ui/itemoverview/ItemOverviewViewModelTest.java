@@ -25,14 +25,12 @@ public class ItemOverviewViewModelTest {
         ItemsModel modelMock = mock(ItemsModel.class);
         when(modelMock.getRoot()).thenReturn(rootItem);
 
-        viewModel = new ItemOverviewViewModel();
-        viewModel.itemsModel = modelMock;
+        viewModel = new ItemOverviewViewModel(modelMock);
     }
 
     @Test
     public void rootTreeItemIsEmptyWhenNoItemsAreAvailableOnInit(){
         assertThat(rootItem.getSubItems()).isEmpty();
-        viewModel.init();
 
         final TreeItem<Item> rootNode = viewModel.getRootNode();
 
@@ -44,8 +42,6 @@ public class ItemOverviewViewModelTest {
     public void rootTreeItemIsFilledWhenItemsAreAvailableOnInit(){
         rootItem.addSubTask("test 1");
         rootItem.addSubTask("test 2");
-
-        viewModel.init();
 
         final TreeItem<Item> rootNode = viewModel.getRootNode();
 
@@ -66,8 +62,6 @@ public class ItemOverviewViewModelTest {
     public void treeItemsAreAddedWhenItemsAreAdded(){
         rootItem.addSubTask("test 1");
 
-        viewModel.init();
-
         final ObservableList<TreeItem<Item>> treeItems = viewModel.getRootNode().getChildren();
 
         assertThat(treeItems).hasSize(1);
@@ -85,8 +79,6 @@ public class ItemOverviewViewModelTest {
         rootItem.addSubTask("test 1");
         rootItem.addSubTask("test 2");
 
-        viewModel.init();
-
         final ObservableList<TreeItem<Item>> treeItems = viewModel.getRootNode().getChildren();
 
         assertThat(treeItems).hasSize(2);
@@ -103,8 +95,6 @@ public class ItemOverviewViewModelTest {
         rootItem.addSubTask("test 1");
         rootItem.addSubTask("test 2");
 
-
-        viewModel.init();
 
         final ObservableList<TreeItem<Item>> treeItems = viewModel.getRootNode().getChildren();
         assertThat(getItemTitles(treeItems)).contains("test 1");

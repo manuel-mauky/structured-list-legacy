@@ -11,8 +11,6 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Optional;
 
@@ -23,18 +21,10 @@ public class ItemOverviewViewModel implements ViewModel {
 
     private ObjectProperty<TreeItem<Item>> selectedItem = new SimpleObjectProperty<>();
 
-    @Inject
-    ItemsModel itemsModel;
-
-    public ItemOverviewViewModel(){
+    public ItemOverviewViewModel(ItemsModel itemsModel){
         rootNode = new RecursiveTreeItem<>(Item::getSubItems);
-    }
-
-    @PostConstruct
-    void init(){
         rootNode.setValue(itemsModel.getRoot());
     }
-
 
     public TreeItem<Item> getRootNode(){
         return rootNode;
