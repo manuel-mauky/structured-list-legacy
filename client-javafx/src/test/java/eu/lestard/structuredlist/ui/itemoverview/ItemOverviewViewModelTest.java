@@ -2,6 +2,7 @@ package eu.lestard.structuredlist.ui.itemoverview;
 
 import eu.lestard.structuredlist.model.Item;
 import eu.lestard.structuredlist.model.ItemsModel;
+import eu.lestard.structuredlist.util.RecursiveTreeItem;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import org.junit.Before;
@@ -19,6 +20,8 @@ public class ItemOverviewViewModelTest {
 
     private Item rootItem;
 
+    private TreeItem<Item> rootNode;
+
     @Before
     public void setup(){
         rootItem = new Item("root");
@@ -26,13 +29,13 @@ public class ItemOverviewViewModelTest {
         when(modelMock.getRoot()).thenReturn(rootItem);
 
         viewModel = new ItemOverviewViewModel(modelMock);
+
+        rootNode = new RecursiveTreeItem<Item>(viewModel.getRootItem(), Item::getSubItems);
     }
 
     @Test
     public void rootTreeItemIsEmptyWhenNoItemsAreAvailableOnInit(){
         assertThat(rootItem.getSubItems()).isEmpty();
-
-        final TreeItem<Item> rootNode = viewModel.getRootNode();
 
         assertThat(rootNode).isNotNull();
         assertThat(rootNode.getChildren()).isEmpty();
@@ -42,8 +45,6 @@ public class ItemOverviewViewModelTest {
     public void rootTreeItemIsFilledWhenItemsAreAvailableOnInit(){
         rootItem.addSubTask("test 1");
         rootItem.addSubTask("test 2");
-
-        final TreeItem<Item> rootNode = viewModel.getRootNode();
 
         assertThat(rootNode).isNotNull();
 
@@ -62,7 +63,7 @@ public class ItemOverviewViewModelTest {
     public void treeItemsAreAddedWhenItemsAreAdded(){
         rootItem.addSubTask("test 1");
 
-        final ObservableList<TreeItem<Item>> treeItems = viewModel.getRootNode().getChildren();
+        final ObservableList<TreeItem<Item>> treeItems = rootNode.getChildren();
 
         assertThat(treeItems).hasSize(1);
         assertThat(treeItems.get(0).getValue().getText()).isEqualTo("test 1");
@@ -79,7 +80,7 @@ public class ItemOverviewViewModelTest {
         rootItem.addSubTask("test 1");
         rootItem.addSubTask("test 2");
 
-        final ObservableList<TreeItem<Item>> treeItems = viewModel.getRootNode().getChildren();
+        final ObservableList<TreeItem<Item>> treeItems = rootNode.getChildren();
 
         assertThat(treeItems).hasSize(2);
 
@@ -96,7 +97,7 @@ public class ItemOverviewViewModelTest {
         rootItem.addSubTask("test 2");
 
 
-        final ObservableList<TreeItem<Item>> treeItems = viewModel.getRootNode().getChildren();
+        final ObservableList<TreeItem<Item>> treeItems = rootNode.getChildren();
         assertThat(getItemTitles(treeItems)).contains("test 1");
 
         rootItem.getSubItems().set(0, new Item("other text"));

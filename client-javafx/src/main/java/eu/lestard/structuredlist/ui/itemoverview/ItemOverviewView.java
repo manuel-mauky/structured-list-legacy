@@ -2,7 +2,10 @@ package eu.lestard.structuredlist.ui.itemoverview;
 
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import eu.lestard.advanced_bindings.api.ObjectBindings;
 import eu.lestard.structuredlist.model.Item;
+import eu.lestard.structuredlist.util.RecursiveTreeItem;
+import javafx.beans.binding.ObjectBinding;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -23,7 +26,8 @@ public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
 
 
     public void initialize() {
-        itemTreeView.setRoot(viewModel.getRootNode());
+        final TreeItem<Item> rootTreeItem = new RecursiveTreeItem<>(viewModel.getRootItem(), Item::getSubItems);
+        itemTreeView.setRoot(rootTreeItem);
 
         titleColumn.setCellValueFactory(param ->
             ItemOverviewViewModel.createTitleColumnBinding(
@@ -33,7 +37,10 @@ public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
             ItemOverviewViewModel.createItemsColumnBinding(
                 param.getValue().getValue()));
 
-        viewModel.selectedItemProperty().bind(itemTreeView.getSelectionModel().selectedItemProperty());
+        final ObjectBinding<Item> selectedItem
+                = ObjectBindings.map(itemTreeView.getSelectionModel().selectedItemProperty(), TreeItem::getValue);
+
+        viewModel.selectedItemProperty().bind(selectedItem);
     }
 
     public void addItem(){
