@@ -22,6 +22,6 @@ public class MenuViewModel implements ViewModel {
     }
 
     public void exit() {
-        notificationCenter.postNotification("exit");
+        notificationCenter.publish("exit");
     }
 }

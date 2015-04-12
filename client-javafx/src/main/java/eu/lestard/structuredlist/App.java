@@ -26,7 +26,7 @@ public class App extends Application {
         MvvmFX.setCustomDependencyInjector(context::getInstance);
 
         final NotificationCenter notificationCenter = context.getInstance(NotificationCenter.class);
-        notificationCenter.addObserverForName("exit", (key, objects) -> Platform.exit());
+        notificationCenter.subscribe("exit", (key, objects) -> Platform.exit());
 
         final Parent root = FluentViewLoader.fxmlView(MainView.class).load().getView();
 
