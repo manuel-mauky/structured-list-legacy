@@ -13,9 +13,9 @@ repositories {
 dependencies {
     compile 'ch.qos.logback:logback-classic:1.1.2'
 
-    compile 'de.saxsys:mvvmfx:1.1.0'
+    compile 'eu.lestard:fluxfx:0.1'
 
-    compile "eu.lestard:easy-di:0.2.0"
+    compile "eu.lestard:easy-di:0.3.0"
     compile 'org.fxmisc.easybind:easybind:1.0.3'
     compile 'eu.lestard:advanced-bindings:0.4.0'
 

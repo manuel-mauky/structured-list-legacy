@@ -35,6 +35,8 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
                 addChildrenListener(newValue);
             }
         });
+
+        this.setExpanded(true);
     }
 
     private void addChildrenListener(T value){

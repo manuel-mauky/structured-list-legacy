@@ -1,15 +1,20 @@
 package eu.lestard.structuredlist.ui.itemoverview;
 
-import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectViewModel;
-import eu.lestard.advanced_bindings.api.ObjectBindings;
-import eu.lestard.structuredlist.model.Item;
+import eu.lestard.fluxfx.View;
+import eu.lestard.structuredlist.actions.NewSubItemAction;
+import eu.lestard.structuredlist.actions.RemoveItemAction;
+import eu.lestard.structuredlist.stores.items.Item;
+import eu.lestard.structuredlist.stores.items.ItemStore;
 import eu.lestard.structuredlist.util.RecursiveTreeItem;
-import javafx.beans.binding.ObjectBinding;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
+import java.util.Optional;
+
+public class ItemOverviewView implements View {
 
 
     @FXML
@@ -21,46 +26,60 @@ public class ItemOverviewView implements FxmlView<ItemOverviewViewModel> {
     @FXML
     private TreeTableColumn<Item, Integer> itemsColumn;
 
-    @InjectViewModel
-    private ItemOverviewViewModel viewModel;
 
+    private final ItemStore itemStore;
+
+    public ItemOverviewView(ItemStore itemStore) {
+        this.itemStore = itemStore;
+    }
 
     public void initialize() {
-        final TreeItem<Item> rootTreeItem = new RecursiveTreeItem<>(viewModel.getRootItem(), Item::getSubItems);
+        final TreeItem<Item> rootTreeItem = new RecursiveTreeItem<>(itemStore.getRootItem(), Item::getSubItems);
         itemTreeView.setRoot(rootTreeItem);
 
         titleColumn.setCellValueFactory(param ->
-            ItemOverviewViewModel.createTitleColumnBinding(
-                param.getValue().getValue()));
+                createTitleColumnBinding(
+                        param.getValue().getValue()));
 
         itemsColumn.setCellValueFactory(param ->
-            ItemOverviewViewModel.createItemsColumnBinding(
-                param.getValue().getValue()));
-
-        final ObjectBinding<Item> selectedItem
-                = ObjectBindings.map(itemTreeView.getSelectionModel().selectedItemProperty(), TreeItem::getValue);
-
-        viewModel.selectedItemProperty().bind(selectedItem);
+                createItemsColumnBinding(
+                        param.getValue().getValue()));
     }
 
-    public void addItem(){
+    public void addItem() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Add new Item");
         dialog.setHeaderText(null);
-        viewModel.addItem(dialog.showAndWait());
+
+        dialog.showAndWait().ifPresent(text ->
+                getSelectedItemId().ifPresent(parentId ->
+                        publishAction(new NewSubItemAction(text, parentId))));
     }
 
-    public void removeItem(){
+    private Optional<String> getSelectedItemId() {
+        return Optional.ofNullable(itemTreeView.getSelectionModel().getSelectedItem())
+                .map(TreeItem::getValue)
+                .map(Item::getId);
+    }
+
+    public void removeItem() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Remove Item");
         alert.setHeaderText("Remove the selected Item");
         alert.setContentText("Do you really want to remove the selected Item?");
 
-        alert.showAndWait().ifPresent(button->{
-            if(button.equals(ButtonType.OK)){
-                viewModel.removeItem();
-            }
-        });
+        alert.showAndWait()
+                .filter(button -> button.equals(ButtonType.OK))
+                .flatMap(button -> getSelectedItemId())
+                .ifPresent(itemId -> publishAction(new RemoveItemAction(itemId)));
     }
 
+
+    private static ObservableStringValue createTitleColumnBinding(Item item) {
+        return Bindings.concat(item.textProperty(), " (", item.recursiveNumberOfAllSubItems(), ")");
+    }
+
+    private static ObservableValue<Integer> createItemsColumnBinding(Item item) {
+        return item.recursiveNumberOfAllSubItems().asObject();
+    }
 }

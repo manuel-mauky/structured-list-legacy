@@ -1,25 +1,23 @@
 package eu.lestard.structuredlist.ui.menu;
 
-import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectViewModel;
+import eu.lestard.fluxfx.View;
+import eu.lestard.structuredlist.actions.ExitApplicationAction;
+import eu.lestard.structuredlist.actions.NewRootItemAction;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextInputDialog;
 
-public class MenuView implements FxmlView<MenuViewModel> {
-
-    @InjectViewModel
-    private MenuViewModel viewModel;
+public class MenuView implements View {
 
     @FXML
     public void newItem(){
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Add new Item");
         dialog.setHeaderText(null);
-        viewModel.newItem(dialog.showAndWait());
+        dialog.showAndWait().ifPresent(text -> publishAction(new NewRootItemAction(text)));
     }
 
     @FXML
     public void exit(){
-        viewModel.exit();
+        publishAction(new ExitApplicationAction());
     }
 }

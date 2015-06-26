@@ -1,9 +1,9 @@
-package eu.lestard.structuredlist.model;
+package eu.lestard.structuredlist.stores.items;
 
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static eu.lestard.assertj.javafx.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ItemTest {
 
@@ -22,7 +22,7 @@ public class ItemTest {
         assertThat(sub1.getParent().get()).isSameAs(root);
 
 
-        root.addSubTask("sub2");
+        root.addSubItem("sub2");
 
         final Item sub2 = root.getSubItems().get(1);
         assertThat(sub2.getParent().get()).isSameAs(root);
