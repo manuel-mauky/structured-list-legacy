@@ -84,6 +84,15 @@ public class Item {
     void addSubItem(String text){
         subItems.add(new Item(text));
     }
+
+    void addSubItem(Item item) {
+        subItems.add(item);
+    }
+
+    void removeSubItem(Item item) {
+        subItems.remove(item);
+    }
+
     void setText(String text) {
         this.text.set(text);
     }
