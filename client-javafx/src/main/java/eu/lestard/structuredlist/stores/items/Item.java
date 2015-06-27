@@ -30,14 +30,15 @@ public class Item {
     private ObservableList<Item> readOnlySubItems = FXCollections.unmodifiableObservableList(subItems);
 
 
-    Item(){
-        id = UUID.randomUUID().toString();
+    Item(String id, String text) {
+        this.id = id;
+        this.setText(text);
 
         final ObservableList<ReadOnlyIntegerProperty> numbersOfAllSubItems = EasyBind.map(subItems, Item::recursiveNumberOfAllSubItems);
 
         final ObservableValue<Number> sum = EasyBind.combine(numbersOfAllSubItems, stream -> stream.reduce(
-            (a, b) ->
-                a.intValue() + b.intValue()).orElse(0));
+                (a, b) ->
+                        a.intValue() + b.intValue()).orElse(0));
 
         recursiveNumberOfAllSubItems.bind(Bindings.size(subItems).add(asDouble(sum)));
 
@@ -55,8 +56,7 @@ public class Item {
     }
 
     Item(String text){
-        this();
-        this.setText(text);
+        this(UUID.randomUUID().toString(), text);
     }
 
     public Optional<Item> findRecursive(String itemId) {
@@ -81,8 +81,11 @@ public class Item {
         this.getParent().ifPresent(parent-> parent.subItems.remove(this));
     }
 
-    void addSubItem(String text){
-        subItems.add(new Item(text));
+    Item addSubItem(String text){
+        final Item newItem = new Item(text);
+        subItems.add(newItem);
+
+        return newItem;
     }
 
     void addSubItem(Item item) {
