@@ -2,8 +2,6 @@ package eu.lestard.structuredlist.eventsourcing.events;
 
 import eu.lestard.structuredlist.eventsourcing.Event;
 
-import java.util.Optional;
-
 public class ItemCreatedEvent extends Event {
 
     private final String parentId;
@@ -18,8 +16,8 @@ public class ItemCreatedEvent extends Event {
         this.text = text;
     }
 
-    public Optional<String> getParentId() {
-        return Optional.ofNullable(parentId);
+    public String getParentId() {
+        return parentId;
     }
 
     public String getItemId() {

@@ -5,6 +5,8 @@ import eu.lestard.fluxfx.ViewLoader;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
 import eu.lestard.structuredlist.eventsourcing.InMemoryEventStore;
 import eu.lestard.structuredlist.eventsourcing.events.ItemCreatedEvent;
+import eu.lestard.structuredlist.stores.items.Item;
+import eu.lestard.structuredlist.stores.items.RootItemFactory;
 import eu.lestard.structuredlist.ui.main.MainView;
 import javafx.application.Application;
 import javafx.scene.Parent;
@@ -29,10 +31,9 @@ public class App extends Application {
 
         final EventStore eventStore = context.getInstance(EventStore.class);
 
-        eventStore.push(new ItemCreatedEvent(null, "root", "Root"));
-        eventStore.push(new ItemCreatedEvent("root", "1", "Eins"));
-        eventStore.push(new ItemCreatedEvent("root", "2", "Zwei"));
-        eventStore.push(new ItemCreatedEvent("root", "3", "Drei"));
+        eventStore.push(new ItemCreatedEvent(RootItemFactory.ROOT_ID, "1", "Eins"));
+        eventStore.push(new ItemCreatedEvent(RootItemFactory.ROOT_ID, "2", "Zwei"));
+        eventStore.push(new ItemCreatedEvent(RootItemFactory.ROOT_ID, "3", "Drei"));
         eventStore.push(new ItemCreatedEvent("1", "1_1", "Eins_Eins"));
         eventStore.push(new ItemCreatedEvent("1", "1_2", "Eins_Zwei"));
         eventStore.push(new ItemCreatedEvent("1", "1_3", "Eins_Drei"));
@@ -40,6 +41,11 @@ public class App extends Application {
         eventStore.push(new ItemCreatedEvent("2", "2_2", "Zwei_Zwei"));
         eventStore.push(new ItemCreatedEvent("2", "2_3", "Zwei_Drei"));
 
+        final RootItemFactory rootItemFactory = context.getInstance(RootItemFactory.class);
+
+        final Item rootItem = rootItemFactory.createRootItem();
+
+        context.bindInstance(Item.class, rootItem);
 
 
         final Parent root = ViewLoader.load(MainView.class);

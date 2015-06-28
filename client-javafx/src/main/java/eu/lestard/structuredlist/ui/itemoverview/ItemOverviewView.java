@@ -1,7 +1,7 @@
 package eu.lestard.structuredlist.ui.itemoverview;
 
 import eu.lestard.fluxfx.View;
-import eu.lestard.structuredlist.actions.NewSubItemAction;
+import eu.lestard.structuredlist.actions.NewItemAction;
 import eu.lestard.structuredlist.actions.RemoveItemAction;
 import eu.lestard.structuredlist.stores.items.Item;
 import eu.lestard.structuredlist.stores.items.ItemStore;
@@ -53,7 +53,7 @@ public class ItemOverviewView implements View {
 
         dialog.showAndWait().ifPresent(text ->
                 getSelectedItemId().ifPresent(parentId ->
-                        publishAction(new NewSubItemAction(text, parentId))));
+                        publishAction(new NewItemAction(parentId, text))));
     }
 
     private Optional<String> getSelectedItemId() {
