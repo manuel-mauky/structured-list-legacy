@@ -15,6 +15,11 @@ public abstract class Event implements Comparable<Event> {
         timeStamp = LocalDateTime.now();
     }
 
+    private Event(String id, LocalDateTime timeStamp) {
+        this.id = id;
+        this.timeStamp = timeStamp;
+    }
+
     public String getId() {
         return id;
     }

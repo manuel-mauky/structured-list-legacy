@@ -3,7 +3,7 @@ package eu.lestard.structuredlist;
 import eu.lestard.easydi.EasyDI;
 import eu.lestard.fluxfx.ViewLoader;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
-import eu.lestard.structuredlist.eventsourcing.InMemoryEventStore;
+import eu.lestard.structuredlist.eventsourcing.JsonEventStore;
 import eu.lestard.structuredlist.eventsourcing.events.ItemCreatedEvent;
 import eu.lestard.structuredlist.stores.items.Item;
 import eu.lestard.structuredlist.stores.items.RootItemFactory;
@@ -24,12 +24,14 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         EasyDI context = new EasyDI();
         
-        context.bindInterface(EventStore.class, InMemoryEventStore.class);
+        context.bindInterface(EventStore.class, JsonEventStore.class);
 
         ViewLoader.setDependencyInjector(context::getInstance);
 
 
         final EventStore eventStore = context.getInstance(EventStore.class);
+
+        if(false) {
 
         eventStore.push(new ItemCreatedEvent(RootItemFactory.ROOT_ID, "1", "Eins"));
         eventStore.push(new ItemCreatedEvent(RootItemFactory.ROOT_ID, "2", "Zwei"));
@@ -40,6 +42,7 @@ public class App extends Application {
         eventStore.push(new ItemCreatedEvent("2", "2_1", "Zwei_Eins"));
         eventStore.push(new ItemCreatedEvent("2", "2_2", "Zwei_Zwei"));
         eventStore.push(new ItemCreatedEvent("2", "2_3", "Zwei_Drei"));
+        }
 
         final RootItemFactory rootItemFactory = context.getInstance(RootItemFactory.class);
 

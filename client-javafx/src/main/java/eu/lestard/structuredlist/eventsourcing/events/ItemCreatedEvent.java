@@ -1,5 +1,7 @@
 package eu.lestard.structuredlist.eventsourcing.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.lestard.structuredlist.eventsourcing.Event;
 
 public class ItemCreatedEvent extends Event {
@@ -10,7 +12,8 @@ public class ItemCreatedEvent extends Event {
 
     private final String text;
 
-    public ItemCreatedEvent(String parentId, String itemId, String text) {
+    @JsonCreator
+    public ItemCreatedEvent(@JsonProperty("parentId") String parentId, @JsonProperty("itemId") String itemId, @JsonProperty("text") String text) {
         this.parentId = parentId;
         this.itemId = itemId;
         this.text = text;
