@@ -1,6 +1,22 @@
 apply plugin: "java"
 
+apply from: 'https://bintray.com/artifact/download/shemnon/javafx-gradle/8.1.1/javafx.plugin'
+
+
 sourceCompatibility= 1.8
+
+
+javafx {
+    mainClass = "eu.lestard.structuredlist.App"
+    appID 'Structure-List'
+    appName 'Structure-List'
+
+    copyright 'Copyright (c) 2015 Manuel Mauky'
+    licenseType 'GPL 3'
+    vendor 'http://www.lestard.eu'
+}
+
+
 
 repositories {
     mavenLocal()
