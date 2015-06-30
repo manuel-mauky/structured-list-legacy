@@ -8,8 +8,6 @@ import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,23 +18,20 @@ public class JsonEventStore implements EventStore {
     private ObjectMapper mapper = new ObjectMapper();
     private List<Event> events = new ArrayList<>();
 
-    public JsonEventStore() {
+
+    public JsonEventStore(File file) {
+        this.file = file;
+
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-
         mapper.enableDefaultTyping();
-
         mapper.registerModule(new JSR310Module());
 
-        final Path path = Paths.get("timetracker.json");
-        System.out.println("path:" + path.toAbsolutePath());
-
-        file = path.toFile();
-
-        if(file.exists()){
+        if(file.length() == 0) {
+            events = new ArrayList<>();
+        } else {
             try {
-
                 JavaType listType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Event.class);
 
                 events = mapper.readValue(file, listType);
