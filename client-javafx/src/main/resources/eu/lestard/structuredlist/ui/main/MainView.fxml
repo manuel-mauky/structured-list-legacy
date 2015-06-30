@@ -6,6 +6,6 @@
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.lestard.structuredlist.ui.main.MainView">
     <children>
         <fx:include source="../menu/MenuView.fxml"/>
-        <fx:include source="../itemoverview/ItemOverviewView.fxml" />
+        <fx:include source="../itemoverview/ItemOverviewView.fxml" VBox.vgrow="ALWAYS"/>
     </children>
 </VBox>
