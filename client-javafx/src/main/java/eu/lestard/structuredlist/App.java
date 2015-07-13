@@ -5,6 +5,7 @@ import eu.lestard.fluxfx.ViewLoader;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
 import eu.lestard.structuredlist.eventsourcing.InMemoryEventStore;
 import eu.lestard.structuredlist.eventsourcing.JsonEventStore;
+import eu.lestard.structuredlist.stores.SystemStore;
 import eu.lestard.structuredlist.stores.items.Item;
 import eu.lestard.structuredlist.stores.items.RootItemFactory;
 import eu.lestard.structuredlist.ui.main.MainView;
@@ -29,6 +30,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         EasyDI context = new EasyDI();
+		context.getInstance(SystemStore.class); // instantiate SystemStore
 
         final Optional<File> file = getStorageFile();
 

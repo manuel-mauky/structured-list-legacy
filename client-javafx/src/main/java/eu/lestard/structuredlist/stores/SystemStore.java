@@ -1,13 +1,16 @@
 package eu.lestard.structuredlist.stores;
 
-import eu.lestard.fluxfx.Action;
+
 import eu.lestard.fluxfx.Store;
 import eu.lestard.structuredlist.actions.ExitApplicationAction;
 import javafx.application.Platform;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class SystemStore extends Store {
 
-    public <T extends Action> SystemStore() {
+    public SystemStore() {
         subscribe(ExitApplicationAction.class, this::processExit);
     }
 

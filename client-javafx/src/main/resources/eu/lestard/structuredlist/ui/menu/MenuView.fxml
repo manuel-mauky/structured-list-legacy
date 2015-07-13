@@ -4,23 +4,24 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.lestard.structuredlist.ui.menu.MenuView">
+<AnchorPane maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.lestard.structuredlist.ui.menu.MenuView">
    <children>
       <MenuBar layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <menus>
-            <Menu mnemonicParsing="false" text="Items">
+            <Menu mnemonicParsing="false" text="File">
                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#newItem" text="New Item" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Preferences…" />
+                  <MenuItem disable="true" mnemonicParsing="false" text="Preferences…" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#exit" text="Quit" />
                </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Edit" />
+            <Menu mnemonicParsing="false" text="Items">
+               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#newItem" text="New Item" />
+               </items></Menu>
             <Menu mnemonicParsing="false" text="Help">
                <items>
-                  <MenuItem mnemonicParsing="false" text="About structured-list" />
+                  <MenuItem disable="true" mnemonicParsing="false" text="About structured-list" />
                </items>
             </Menu>
          </menus>
