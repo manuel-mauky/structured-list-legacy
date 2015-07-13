@@ -13,7 +13,7 @@ javafx {
 
     copyright 'Copyright (c) 2015 Manuel Mauky'
     licenseType 'GPL 3'
-    vendor 'http://www.lestard.eu'
+    vendor 'structure-list'
 }
 
 

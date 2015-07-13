@@ -58,6 +58,7 @@ public class App extends Application {
 
         final Parent root = ViewLoader.load(MainView.class);
 
+		stage.setTitle("Structure-List");
         stage.setScene(new Scene(root));
         stage.sizeToScene();
         stage.show();
