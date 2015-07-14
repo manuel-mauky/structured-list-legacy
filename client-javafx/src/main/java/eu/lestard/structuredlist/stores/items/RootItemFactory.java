@@ -4,6 +4,7 @@ import eu.lestard.structuredlist.eventsourcing.Event;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
 import eu.lestard.structuredlist.eventsourcing.events.ItemCreatedEvent;
 import eu.lestard.structuredlist.eventsourcing.events.ItemRemovedEvent;
+import eu.lestard.structuredlist.eventsourcing.events.ItemTextChangedEvent;
 
 import java.util.Optional;
 
@@ -29,10 +30,23 @@ public class RootItemFactory {
             if(event instanceof ItemRemovedEvent) {
                 processItemRemovedEvent(rootItem, (ItemRemovedEvent) event);
             }
+			
+			if(event instanceof ItemTextChangedEvent) {
+				processItemTextChangedEvent(rootItem, (ItemTextChangedEvent) event);
+			}
         }
 
         return rootItem;
     }
+	
+	private void processItemTextChangedEvent(Item rootItem, ItemTextChangedEvent event) {
+		final String itemId = event.getItemId();
+		final String text = event.getText();
+		
+		rootItem.findRecursive(itemId)
+				.ifPresent(item -> item.setText(text));
+		
+	}
 
     private void processItemCreatedEvent(Item rootItem, ItemCreatedEvent itemCreatedEvent) {
         final String parentId = itemCreatedEvent.getParentId();

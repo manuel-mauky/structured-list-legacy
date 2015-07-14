@@ -21,6 +21,7 @@
             <ContextMenu>
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#addItem" text="Add Item" />
+                <MenuItem mnemonicParsing="false" onAction="#editItem" text="Show/Edit Item" />
                   <MenuItem mnemonicParsing="false" onAction="#removeItem" text="Remove Item" />
               </items>
             </ContextMenu>

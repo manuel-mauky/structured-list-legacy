@@ -1,6 +1,7 @@
 package eu.lestard.structuredlist.ui.itemoverview;
 
 import eu.lestard.fluxfx.View;
+import eu.lestard.structuredlist.actions.EditItemAction;
 import eu.lestard.structuredlist.actions.NewItemAction;
 import eu.lestard.structuredlist.actions.RemoveItemAction;
 import eu.lestard.structuredlist.stores.items.Item;
@@ -36,6 +37,13 @@ public class ItemOverviewView implements View {
     public void initialize() {
         final TreeItem<Item> rootTreeItem = new RecursiveTreeItem<>(itemStore.getRootItem(), Item::getSubItems);
         itemTreeView.setRoot(rootTreeItem);
+		
+		
+		itemTreeView.setOnMouseClicked(event -> {
+			if(event.getClickCount() > 1) {
+				editItem();
+			}
+		});
 
         titleColumn.setCellValueFactory(param ->
                 createTitleColumnBinding(
@@ -45,6 +53,18 @@ public class ItemOverviewView implements View {
                 createItemsColumnBinding(
                         param.getValue().getValue()));
     }
+	
+	public void editItem() {
+		Optional.ofNullable(itemTreeView.getSelectionModel().getSelectedItem())
+				.map(TreeItem::getValue)
+				.ifPresent(item -> {
+					ItemInputDialog dialog = new ItemInputDialog("Show/Edit Item", item.getText());
+					
+					dialog.showAndWait().ifPresent(newText ->
+							publishAction(new EditItemAction(item.getId(), newText)));
+				});
+		
+	}
 
     public void addItem() {
 		ItemInputDialog dialog = new ItemInputDialog("Add new Item");

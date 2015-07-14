@@ -1,11 +1,13 @@
 package eu.lestard.structuredlist.stores.items;
 
 import eu.lestard.fluxfx.Store;
+import eu.lestard.structuredlist.actions.EditItemAction;
 import eu.lestard.structuredlist.actions.NewItemAction;
 import eu.lestard.structuredlist.actions.RemoveItemAction;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
 import eu.lestard.structuredlist.eventsourcing.events.ItemCreatedEvent;
 import eu.lestard.structuredlist.eventsourcing.events.ItemRemovedEvent;
+import eu.lestard.structuredlist.eventsourcing.events.ItemTextChangedEvent;
 
 import javax.inject.Singleton;
 import java.util.Optional;
@@ -22,8 +24,21 @@ public class ItemStore extends Store {
 
         subscribe(NewItemAction.class, this::processNewSubItem);
         subscribe(RemoveItemAction.class, this::processRemoveItem);
+		subscribe(EditItemAction.class, this::processEditItem);
     }
 
+	void processEditItem(EditItemAction action) {
+		final String itemId = action.getItemId();
+		final String text = action.getNewText();
+		
+		root.findRecursive(itemId).ifPresent(item -> {
+			item.setText(text);
+			
+			eventStore.push(new ItemTextChangedEvent(itemId, text));
+		});
+
+	}
+	
     void processNewSubItem(NewItemAction action) {
         final Optional<String> parentIdOptional = action.getParentId();
 
