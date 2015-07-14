@@ -21,6 +21,11 @@ public class Item {
     private String id;
 
     private ReadOnlyStringWrapper text = new ReadOnlyStringWrapper();
+
+	/**
+	 * The title is the first line of the {@link #text}.
+	 */
+	private ReadOnlyStringWrapper title = new ReadOnlyStringWrapper();
     private Item parent;
 
 
@@ -30,9 +35,9 @@ public class Item {
     private ObservableList<Item> readOnlySubItems = FXCollections.unmodifiableObservableList(subItems);
 
 
-    Item(String id, String text) {
+    Item(String id, String initText) {
         this.id = id;
-        this.setText(text);
+        this.setText(initText);
 
         final ObservableList<ReadOnlyIntegerProperty> numbersOfAllSubItems = EasyBind.map(subItems, Item::recursiveNumberOfAllSubItems);
 
@@ -53,6 +58,18 @@ public class Item {
                 }
             }
         });
+		
+		
+		this.title.bind(Bindings.createStringBinding(() -> {
+			final String text = getText() == null ? "" : getText();
+
+			final String[] lines = text.split("\\r?\\n");
+			
+			if(lines.length > 0) {
+				return lines[0];
+			}
+			return "";
+		}, this.text));
     }
 
     Item(String text){
@@ -116,6 +133,10 @@ public class Item {
         return text.getReadOnlyProperty();
     }
 
+	public ReadOnlyStringProperty titleProperty() {
+		return title.getReadOnlyProperty();
+	}
+	
 
     /**
      * This read-only property represents the recursive number of all sub items.

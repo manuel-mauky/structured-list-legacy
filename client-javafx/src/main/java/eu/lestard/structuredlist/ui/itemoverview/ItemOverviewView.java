@@ -47,9 +47,7 @@ public class ItemOverviewView implements View {
     }
 
     public void addItem() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Add new Item");
-        dialog.setHeaderText(null);
+		ItemInputDialog dialog = new ItemInputDialog("Add new Item");
 
         dialog.showAndWait().ifPresent(text ->
                 getSelectedItemId().ifPresent(parentId ->
@@ -76,7 +74,7 @@ public class ItemOverviewView implements View {
 
 
     private static ObservableStringValue createTitleColumnBinding(Item item) {
-        return Bindings.concat(item.textProperty(), " (", item.recursiveNumberOfAllSubItems(), ")");
+        return Bindings.concat(item.titleProperty(), " (", item.recursiveNumberOfAllSubItems(), ")");
     }
 
     private static ObservableValue<Integer> createItemsColumnBinding(Item item) {
