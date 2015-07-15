@@ -10,8 +10,13 @@ import eu.lestard.structuredlist.stores.items.Item;
 import eu.lestard.structuredlist.stores.items.RootItemFactory;
 import eu.lestard.structuredlist.ui.main.MainView;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -19,8 +24,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class App extends Application {
+
+	private EasyDI context = new EasyDI();
 
     public static void main(String...args) {
         launch(args);
@@ -29,7 +37,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        EasyDI context = new EasyDI();
 		context.getInstance(SystemStore.class); // instantiate SystemStore
 
         final Optional<File> file = getStorageFile();
@@ -45,24 +52,57 @@ public class App extends Application {
             context.bindInterface(EventStore.class, InMemoryEventStore.class);
         }
 
+		ViewLoader.setDependencyInjector(context::getInstance);
+		
+		bootstrap(stage);
+    }
+	
+	private void bootstrap(Stage stage) {
+		VBox root = new VBox();
 
 
-        ViewLoader.setDependencyInjector(context::getInstance);
+		Label loadingLabel = new Label("Loading Items");
+		
+		ProgressIndicator indicator = new ProgressIndicator(0.4);
+		root.getChildren().addAll(loadingLabel,indicator);
+		root.setPadding(new Insets(10));
+		root.setSpacing(10);
+		
+		stage.setScene(new Scene(root));
+		stage.show();
+		
+		
+		
+		final RootItemFactory rootItemFactory = context.getInstance(RootItemFactory.class);
+		rootItemFactory.onProgressChanged((value) ->
+				Platform.runLater(() ->
+						indicator.setProgress(value)));
+		
+		
+		long start = System.currentTimeMillis();
 
-        final RootItemFactory rootItemFactory = context.getInstance(RootItemFactory.class);
+		final CompletableFuture<Item> itemFuture = CompletableFuture
+				.supplyAsync(rootItemFactory::createRootItem);
+		
+		itemFuture.thenAccept(item -> {
+			context.bindInstance(Item.class, item);
+			
+			long end = System.currentTimeMillis();
+	
+			System.out.println("Time taken for loading:" + (end - start) + "ms");
+			
+			Platform.runLater(() -> showApp(stage));
+		});
+	}
+	
+	private void showApp(Stage stage) {
+		
 
-        final Item rootItem = rootItemFactory.createRootItem();
-
-        context.bindInstance(Item.class, rootItem);
-
-
-        final Parent root = ViewLoader.load(MainView.class);
+		final Parent root = ViewLoader.load(MainView.class);
 
 		stage.setTitle("Structure-List");
-        stage.setScene(new Scene(root));
-        stage.sizeToScene();
-        stage.show();
-    }
+		stage.setScene(new Scene(root));
+	}
 
 
 

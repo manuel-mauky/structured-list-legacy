@@ -6,38 +6,69 @@ import eu.lestard.structuredlist.eventsourcing.events.ItemCreatedEvent;
 import eu.lestard.structuredlist.eventsourcing.events.ItemRemovedEvent;
 import eu.lestard.structuredlist.eventsourcing.events.ItemTextChangedEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 public class RootItemFactory {
     public static final String ROOT_ID = "rootId";
 
+	private List<Consumer<Double>> progressConsumer = new ArrayList<>();
 
     private final EventStore eventStore;
 
     public RootItemFactory(EventStore eventStore) {
         this.eventStore = eventStore;
     }
+	
+	public Item createRootItem() {
+		Item rootItem = new Item(ROOT_ID, "root");
 
-    public Item createRootItem() {
+		final List<Event> events = eventStore.getEvents();
 
-        Item rootItem = new Item(ROOT_ID, "root");
+		int i = 0;
+		int size = events.size();
 
-        for (Event event : eventStore.getEvents()) {
-            if(event instanceof ItemCreatedEvent){
-                processItemCreatedEvent(rootItem, (ItemCreatedEvent)event);
-            }
+		publishProgressChanged(i, size);
 
-            if(event instanceof ItemRemovedEvent) {
-                processItemRemovedEvent(rootItem, (ItemRemovedEvent) event);
-            }
-			
+		for (Event event : events) {
+			if(event instanceof ItemCreatedEvent){
+				processItemCreatedEvent(rootItem, (ItemCreatedEvent)event);
+			}
+
+			if(event instanceof ItemRemovedEvent) {
+				processItemRemovedEvent(rootItem, (ItemRemovedEvent) event);
+			}
+
 			if(event instanceof ItemTextChangedEvent) {
 				processItemTextChangedEvent(rootItem, (ItemTextChangedEvent) event);
 			}
-        }
 
-        return rootItem;
-    }
+			i++;
+
+			publishProgressChanged(i, size);
+		}
+
+		return rootItem;
+	}
+	
+	private void publishProgressChanged(int current, int all) {
+		double progress = 0.0;
+		if(all > 0) {
+			progress = (double) current * 100 / (double) all;
+		}
+
+		final double tmp = progress / 100;
+		
+		progressConsumer.forEach(consumer -> consumer.accept(tmp));
+	}
+	
+	public void onProgressChanged(Consumer<Double> listener) {
+		progressConsumer.add(listener);
+	}
 	
 	private void processItemTextChangedEvent(Item rootItem, ItemTextChangedEvent event) {
 		final String itemId = event.getItemId();
