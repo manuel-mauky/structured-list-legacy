@@ -4,6 +4,7 @@ import eu.lestard.fluxfx.View;
 import eu.lestard.structuredlist.actions.ExitApplicationAction;
 import eu.lestard.structuredlist.actions.NewItemAction;
 import eu.lestard.structuredlist.ui.itemoverview.ItemInputDialog;
+import eu.lestard.structuredlist.util.DialogUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextInputDialog;
 
@@ -13,6 +14,8 @@ public class MenuView implements View {
     public void newItem(){
 		
         ItemInputDialog dialog = new ItemInputDialog("Add new Item");
+
+		DialogUtil.initDialogPositioning(dialog);
         dialog.showAndWait().ifPresent(text -> publishAction(new NewItemAction(text)));
     }
 

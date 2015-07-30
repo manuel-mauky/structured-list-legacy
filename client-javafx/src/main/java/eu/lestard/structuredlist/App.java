@@ -9,6 +9,7 @@ import eu.lestard.structuredlist.stores.SystemStore;
 import eu.lestard.structuredlist.stores.items.Item;
 import eu.lestard.structuredlist.stores.items.RootItemFactory;
 import eu.lestard.structuredlist.ui.main.MainView;
+import eu.lestard.structuredlist.util.DialogUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -37,6 +38,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+		DialogUtil.setApplicationWindow(stage);
+		
+		
 		context.getInstance(SystemStore.class); // instantiate SystemStore
 
         final Optional<File> file = getStorageFile();

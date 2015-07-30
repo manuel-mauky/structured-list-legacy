@@ -6,12 +6,15 @@ import eu.lestard.structuredlist.actions.NewItemAction;
 import eu.lestard.structuredlist.actions.RemoveItemAction;
 import eu.lestard.structuredlist.stores.items.Item;
 import eu.lestard.structuredlist.stores.items.ItemStore;
+import eu.lestard.structuredlist.util.DialogUtil;
 import eu.lestard.structuredlist.util.RecursiveTreeItem;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Window;
 
 import java.util.Optional;
 
@@ -40,26 +43,29 @@ public class ItemOverviewView implements View {
 		
 		
 		itemTreeView.setOnMouseClicked(event -> {
-			if(event.getClickCount() > 1) {
+			if (event.getClickCount() > 1) {
 				editItem();
 			}
 		});
 
         titleColumn.setCellValueFactory(param ->
-                createTitleColumnBinding(
-                        param.getValue().getValue()));
+				createTitleColumnBinding(
+						param.getValue().getValue()));
 
         itemsColumn.setCellValueFactory(param ->
-                createItemsColumnBinding(
-                        param.getValue().getValue()));
+				createItemsColumnBinding(
+						param.getValue().getValue()));
     }
+	
 	
 	public void editItem() {
 		Optional.ofNullable(itemTreeView.getSelectionModel().getSelectedItem())
 				.map(TreeItem::getValue)
 				.ifPresent(item -> {
 					ItemInputDialog dialog = new ItemInputDialog("Show/Edit Item", item.getText());
-					
+
+					DialogUtil.initDialogPositioning(dialog);
+
 					dialog.showAndWait().ifPresent(newText ->
 							publishAction(new EditItemAction(item.getId(), newText)));
 				});
@@ -68,10 +74,11 @@ public class ItemOverviewView implements View {
 
     public void addItem() {
 		ItemInputDialog dialog = new ItemInputDialog("Add new Item");
-
+		DialogUtil.initDialogPositioning(dialog);
+		
         dialog.showAndWait().ifPresent(text ->
-                getSelectedItemId().ifPresent(parentId ->
-                        publishAction(new NewItemAction(parentId, text))));
+				getSelectedItemId().ifPresent(parentId ->
+						publishAction(new NewItemAction(parentId, text))));
     }
 
     private Optional<String> getSelectedItemId() {
@@ -85,6 +92,8 @@ public class ItemOverviewView implements View {
         alert.setTitle("Remove Item");
         alert.setHeaderText("Remove the selected Item");
         alert.setContentText("Do you really want to remove the selected Item?");
+
+		DialogUtil.initDialogPositioning(alert);
 
         alert.showAndWait()
                 .filter(button -> button.equals(ButtonType.OK))
