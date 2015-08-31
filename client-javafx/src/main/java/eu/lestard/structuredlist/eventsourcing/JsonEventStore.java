@@ -1,59 +1,69 @@
 package eu.lestard.structuredlist.eventsourcing;
 
-import com.fasterxml.jackson.databind.JavaType;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Singleton;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-
-import javax.inject.Singleton;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Singleton
 public class JsonEventStore implements EventStore {
 
     private File file;
     private ObjectMapper mapper = new ObjectMapper();
-    private List<Event> events = new ArrayList<>();
 
 
     public JsonEventStore(File file) {
         this.file = file;
 
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        mapper.enableDefaultTyping();
-        mapper.registerModule(new JSR310Module());
-
-        if(file.length() == 0) {
-            events = new ArrayList<>();
-        } else {
-            try {
-                JavaType listType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, Event.class);
-
-                events = mapper.readValue(file, listType);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+		mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+		mapper.registerModule(new JSR310Module());
     }
 
     @Override
     public void push(Event event) {
-        events.add(event);
+		try {
+			final String eventJson = mapper.writeValueAsString(event);
 
-        try {
-            mapper.writeValue(file, events);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+			Files.write(file.toPath(), Collections.singletonList(eventJson), StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 
     @Override
     public List<Event> getEvents() {
-        return events;
+		try {
+			final List<String> lines = Files.readAllLines(file.toPath());
+
+			return lines.stream()
+					.map(line -> {
+						try {
+							return mapper.readValue(line, Event.class);
+						} catch (IOException e) {
+							throw new RuntimeException(e);
+						}
+					})
+					.collect(Collectors.toList());
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+		return Collections.emptyList();
     }
 }

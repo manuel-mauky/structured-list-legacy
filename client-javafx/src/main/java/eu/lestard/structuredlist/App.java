@@ -40,7 +40,6 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
 		DialogUtil.setApplicationWindow(stage);
 		
-		
 		context.getInstance(SystemStore.class); // instantiate SystemStore
 
         final Optional<File> file = getStorageFile();
@@ -110,7 +109,7 @@ public class App extends Application {
 
 
 
-    private Optional<File> getStorageFile() {
+    public static Optional<File> getStorageFile() {
         final String userhome = System.getProperty("user.home");
 
         final Path appDirPath = Paths.get(userhome, ".structure-list");
