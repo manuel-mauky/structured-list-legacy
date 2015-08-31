@@ -7,7 +7,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.lestard.structuredlist.ui.itemoverview.ItemOverviewView">
+<AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.lestard.structuredlist.ui.itemoverview.ItemOverviewView">
    <children>
       <TreeTableView fx:id="itemTreeView" editable="true" showRoot="false" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columns>
@@ -22,6 +22,8 @@
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#addItem" text="Add Item" />
                 <MenuItem mnemonicParsing="false" onAction="#editItem" text="Show/Edit Item" />
+                  <MenuItem mnemonicParsing="false" onAction="#completeItem" text="Complete" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#removeItem" text="Remove Item" />
               </items>
             </ContextMenu>

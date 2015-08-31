@@ -1,6 +1,7 @@
 package eu.lestard.structuredlist.ui.itemoverview;
 
 import eu.lestard.fluxfx.View;
+import eu.lestard.structuredlist.actions.CompleteItemAction;
 import eu.lestard.structuredlist.actions.EditItemAction;
 import eu.lestard.structuredlist.actions.NewItemAction;
 import eu.lestard.structuredlist.actions.RemoveItemAction;
@@ -8,13 +9,11 @@ import eu.lestard.structuredlist.stores.items.Item;
 import eu.lestard.structuredlist.stores.items.ItemStore;
 import eu.lestard.structuredlist.util.DialogUtil;
 import eu.lestard.structuredlist.util.RecursiveTreeItem;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Window;
 
 import java.util.Optional;
 
@@ -38,7 +37,7 @@ public class ItemOverviewView implements View {
     }
 
     public void initialize() {
-        final TreeItem<Item> rootTreeItem = new RecursiveTreeItem<>(itemStore.getRootItem(), Item::getSubItems);
+        final TreeItem<Item> rootTreeItem = new RecursiveTreeItem<>(itemStore.getRootItem(), Item::getOpenSubItems);
         itemTreeView.setRoot(rootTreeItem);
 		
 		
@@ -101,12 +100,16 @@ public class ItemOverviewView implements View {
                 .ifPresent(itemId -> publishAction(new RemoveItemAction(itemId)));
     }
 
+	public void completeItem() {
+		getSelectedItemId().ifPresent(itemId -> publishAction(new CompleteItemAction(itemId)));
+	}
 
     private static ObservableStringValue createTitleColumnBinding(Item item) {
-        return Bindings.concat(item.titleProperty(), " (", item.recursiveNumberOfAllSubItems(), ")");
+        return Bindings.concat(item.titleProperty(), " (", item.recursiveNumberOfOpenSubItems(), ")");
     }
 
     private static ObservableValue<Integer> createItemsColumnBinding(Item item) {
-        return item.recursiveNumberOfAllSubItems().asObject();
+        return item.recursiveNumberOfOpenSubItems().asObject();
     }
+
 }

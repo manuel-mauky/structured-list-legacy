@@ -45,39 +45,39 @@ public class ItemTest {
     @Test
     public void testRecursiveNumberOfAllSubItems(){
         Item root = new Item("root");
-        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(0);
+        assertThat(root.recursiveNumberOfOpenSubItems()).hasValue(0);
 
         Item sub1 = new Item("sub1");
         root.addSubItem(sub1);
 
-        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(1);
+        assertThat(root.recursiveNumberOfOpenSubItems()).hasValue(1);
 
 
         Item sub2 = new Item("sub2");
         root.addSubItem(sub2);
-        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(2);
+        assertThat(root.recursiveNumberOfOpenSubItems()).hasValue(2);
 
 
         Item sub2_1 = new Item("sub2_1");
         sub2.addSubItem(sub2_1);
-        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(3);
+        assertThat(root.recursiveNumberOfOpenSubItems()).hasValue(3);
 
         Item sub2_2 = new Item("sub2_2");
         sub2.addSubItem(sub2_2);
-        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(4);
+        assertThat(root.recursiveNumberOfOpenSubItems()).hasValue(4);
 
         Item sub2_3 = new Item("sub2_3");
         sub2.addSubItem(sub2_3);
-        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(5);
+        assertThat(root.recursiveNumberOfOpenSubItems()).hasValue(5);
 
 
         Item sub2_3_1 = new Item("sub2_3_1");
         sub2_3.addSubItem(sub2_3_1);
-        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(6);
+        assertThat(root.recursiveNumberOfOpenSubItems()).hasValue(6);
 
 
         sub2.removeSubItem(sub2_3);
-        assertThat(root.recursiveNumberOfAllSubItems()).hasValue(4);
+        assertThat(root.recursiveNumberOfOpenSubItems()).hasValue(4);
     }
 
     @Test

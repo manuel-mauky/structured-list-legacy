@@ -2,6 +2,7 @@ package eu.lestard.structuredlist.stores.items;
 
 import eu.lestard.structuredlist.eventsourcing.Event;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
+import eu.lestard.structuredlist.eventsourcing.events.ItemCompletedEvent;
 import eu.lestard.structuredlist.eventsourcing.events.ItemCreatedEvent;
 import eu.lestard.structuredlist.eventsourcing.events.ItemRemovedEvent;
 import eu.lestard.structuredlist.eventsourcing.events.ItemTextChangedEvent;
@@ -46,6 +47,10 @@ public class RootItemFactory {
 			if(event instanceof ItemTextChangedEvent) {
 				processItemTextChangedEvent(rootItem, (ItemTextChangedEvent) event);
 			}
+			
+			if(event instanceof ItemCompletedEvent) {
+				processItemCompletedEvent(rootItem, (ItemCompletedEvent) event);
+			}
 
 			i++;
 
@@ -54,7 +59,14 @@ public class RootItemFactory {
 
 		return rootItem;
 	}
-	
+
+	private void processItemCompletedEvent(Item rootItem, ItemCompletedEvent event) {
+		String itemId = event.getItemId();
+		
+		rootItem.findRecursive(itemId)
+				.ifPresent(item -> item.setCompleted(true));
+	}
+
 	private void publishProgressChanged(int current, int all) {
 		double progress = 0.0;
 		if(all > 0) {

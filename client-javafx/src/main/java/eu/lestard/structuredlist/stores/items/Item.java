@@ -1,6 +1,9 @@
 package eu.lestard.structuredlist.stores.items;
 
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerWrapper;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -21,6 +24,8 @@ public class Item {
     private String id;
 
     private ReadOnlyStringWrapper text = new ReadOnlyStringWrapper();
+	
+	private ReadOnlyBooleanWrapper completed = new ReadOnlyBooleanWrapper(false);
 
 	/**
 	 * The title is the first line of the {@link #text}.
@@ -29,23 +34,24 @@ public class Item {
     private Item parent;
 
 
-    private ReadOnlyIntegerWrapper recursiveNumberOfAllSubItems = new ReadOnlyIntegerWrapper(0);
+    private ReadOnlyIntegerWrapper recursiveNumberOfOpenSubItems = new ReadOnlyIntegerWrapper(0);
 
-    private ObservableList<Item> subItems = FXCollections.observableArrayList();
+    private ObservableList<Item> subItems = FXCollections.observableArrayList(Item::getObservables);
     private ObservableList<Item> readOnlySubItems = FXCollections.unmodifiableObservableList(subItems);
+	private ObservableList<Item> openSubItems = subItems.filtered(item -> !item.completed.get());
 
 
     Item(String id, String initText) {
         this.id = id;
         this.setText(initText);
 
-        final ObservableList<ReadOnlyIntegerProperty> numbersOfAllSubItems = EasyBind.map(subItems, Item::recursiveNumberOfAllSubItems);
+        final ObservableList<ReadOnlyIntegerProperty> numbersOfAllSubItems = EasyBind.map(openSubItems, Item::recursiveNumberOfOpenSubItems);
 
         final ObservableValue<Number> sum = EasyBind.combine(numbersOfAllSubItems, stream -> stream.reduce(
                 (a, b) ->
                         a.intValue() + b.intValue()).orElse(0));
 
-        recursiveNumberOfAllSubItems.bind(Bindings.size(subItems).add(asDouble(sum)));
+        recursiveNumberOfOpenSubItems.bind(Bindings.size(openSubItems).add(asDouble(sum)));
 
         subItems.addListener((ListChangeListener<Item>) change -> {
             while (change.next()) {
@@ -120,10 +126,18 @@ public class Item {
     void setParent(Item parentItem){
         this.parent = parentItem;
     }
+	
+	void setCompleted(boolean completed) {
+		this.completed.set(completed);
+	}
 
     public ObservableList<Item> getSubItems(){
         return readOnlySubItems;
     }
+	
+	public ObservableList<Item> getOpenSubItems() {
+		return openSubItems;
+	}
 
     public String getText() {
         return text.get();
@@ -137,17 +151,20 @@ public class Item {
 		return title.getReadOnlyProperty();
 	}
 	
+	public ReadOnlyBooleanProperty completedProperty() {
+		return completed.getReadOnlyProperty();
+	}
 
     /**
-     * This read-only property represents the recursive number of all sub items.
+     * This read-only property represents the recursive number of all open (not completed) sub items.
      * Example: This item has 3 sub-items and each of these sub-items itself has 2 sub-items.
      * Then this property will have the value 9 (3 + 3*2).
      *
      *
-     * @return the recursive number of all sub items.
+     * @return the recursive number of all open sub items.
      */
-    public ReadOnlyIntegerProperty recursiveNumberOfAllSubItems(){
-        return recursiveNumberOfAllSubItems.getReadOnlyProperty();
+    public ReadOnlyIntegerProperty recursiveNumberOfOpenSubItems(){
+        return recursiveNumberOfOpenSubItems.getReadOnlyProperty();
     }
 
 
@@ -168,4 +185,9 @@ public class Item {
     public String toString() {
         return "Item[title='" + getText() + "']";
     }
+	
+	
+	public Observable[] getObservables() {
+		return new Observable[] {text, completed, title};
+	}
 }
