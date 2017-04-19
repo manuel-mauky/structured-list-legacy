@@ -28,18 +28,21 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
 
     private Callback<T, ObservableList<T>> childrenFactory;
 
-    public RecursiveTreeItem(Callback<T, ObservableList<T>> func){
-        this(null, func);
+    private Callback<T, Node> graphicsFactory;
+
+    public RecursiveTreeItem(Callback<T, ObservableList<T>> childrenFactory){
+        this(null, childrenFactory);
     }
 
-    public RecursiveTreeItem(final T value, Callback<T, ObservableList<T>> func){
-        this(value, (Node) null, func);
+    public RecursiveTreeItem(final T value, Callback<T, ObservableList<T>> childrenFactory){
+        this(value, (item) -> null, childrenFactory);
     }
 
-    public RecursiveTreeItem(final T value, Node graphic, Callback<T, ObservableList<T>> func){
-        super(value, graphic);
+    public RecursiveTreeItem(final T value, Callback<T, Node> graphicsFactory, Callback<T, ObservableList<T>> childrenFactory){
+        super(value, graphicsFactory.call(value));
 
-        this.childrenFactory = func;
+        this.graphicsFactory = graphicsFactory;
+        this.childrenFactory = childrenFactory;
 
         if(value != null) {
             addChildrenListener(value);
@@ -57,13 +60,13 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
     private void addChildrenListener(T value){
         final ObservableList<T> children = childrenFactory.call(value);
 
-        children.forEach(child ->  RecursiveTreeItem.this.getChildren().add(new RecursiveTreeItem<>(child, getGraphic(), childrenFactory)));
+        children.forEach(child ->  RecursiveTreeItem.this.getChildren().add(new RecursiveTreeItem<>(child, this.graphicsFactory, childrenFactory)));
 
         children.addListener((ListChangeListener<T>) change -> {
             while(change.next()){
 
                 if(change.wasAdded()){
-                    change.getAddedSubList().forEach(t-> RecursiveTreeItem.this.getChildren().add(new RecursiveTreeItem<>(t, getGraphic(), childrenFactory)));
+                    change.getAddedSubList().forEach(t-> RecursiveTreeItem.this.getChildren().add(new RecursiveTreeItem<>(t, this.graphicsFactory, childrenFactory)));
                 }
 
                 if(change.wasRemoved()){
