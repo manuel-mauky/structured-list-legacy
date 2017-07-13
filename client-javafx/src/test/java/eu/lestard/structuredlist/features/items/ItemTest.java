@@ -1,4 +1,4 @@
-package eu.lestard.structuredlist.stores.items;
+package eu.lestard.structuredlist.features.items;
 
 import org.junit.Test;
 

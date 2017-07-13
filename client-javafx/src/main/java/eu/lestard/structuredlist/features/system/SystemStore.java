@@ -1,8 +1,8 @@
-package eu.lestard.structuredlist.stores;
+package eu.lestard.structuredlist.features.system;
 
 
 import eu.lestard.fluxfx.Store;
-import eu.lestard.structuredlist.actions.ExitApplicationAction;
+import eu.lestard.structuredlist.features.system.actions.ExitApplicationAction;
 import javafx.application.Platform;
 
 import javax.inject.Singleton;

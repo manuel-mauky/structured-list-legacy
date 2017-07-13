@@ -26,19 +26,19 @@ import java.util.stream.Collectors;
 
 public class RecursiveTreeItem<T> extends TreeItem<T> {
 
-    private Callback<T, ObservableList<T>> childrenFactory;
+    private Callback<T, ObservableList<? extends T>> childrenFactory;
 
     private Callback<T, Node> graphicsFactory;
 
-    public RecursiveTreeItem(Callback<T, ObservableList<T>> childrenFactory){
+    public RecursiveTreeItem(Callback<T, ObservableList<? extends T>> childrenFactory){
         this(null, childrenFactory);
     }
 
-    public RecursiveTreeItem(final T value, Callback<T, ObservableList<T>> childrenFactory){
+    public RecursiveTreeItem(final T value, Callback<T, ObservableList<? extends T>> childrenFactory){
         this(value, (item) -> null, childrenFactory);
     }
 
-    public RecursiveTreeItem(final T value, Callback<T, Node> graphicsFactory, Callback<T, ObservableList<T>> childrenFactory){
+    public RecursiveTreeItem(final T value, Callback<T, Node> graphicsFactory, Callback<T, ObservableList<? extends T>> childrenFactory){
         super(value, graphicsFactory.call(value));
 
         this.graphicsFactory = graphicsFactory;
@@ -58,7 +58,7 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
     }
 
     private void addChildrenListener(T value){
-        final ObservableList<T> children = childrenFactory.call(value);
+        final ObservableList<? extends T> children = childrenFactory.call(value);
 
         children.forEach(child ->  RecursiveTreeItem.this.getChildren().add(new RecursiveTreeItem<>(child, this.graphicsFactory, childrenFactory)));
 

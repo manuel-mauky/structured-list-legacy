@@ -1,10 +1,10 @@
-package eu.lestard.structuredlist.stores.items;
+package eu.lestard.structuredlist.features.items;
 
 import eu.lestard.fluxfx.Store;
-import eu.lestard.structuredlist.actions.CompleteItemAction;
-import eu.lestard.structuredlist.actions.EditItemAction;
-import eu.lestard.structuredlist.actions.NewItemAction;
-import eu.lestard.structuredlist.actions.RemoveItemAction;
+import eu.lestard.structuredlist.features.items.actions.CompleteItemAction;
+import eu.lestard.structuredlist.features.items.actions.EditItemAction;
+import eu.lestard.structuredlist.features.items.actions.NewItemAction;
+import eu.lestard.structuredlist.features.items.actions.RemoveItemAction;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
 import eu.lestard.structuredlist.eventsourcing.events.ItemCompletedEvent;
 import eu.lestard.structuredlist.eventsourcing.events.ItemCreatedEvent;

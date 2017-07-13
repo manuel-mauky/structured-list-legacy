@@ -1,12 +1,12 @@
 package eu.lestard.structuredlist.ui.itemoverview;
 
 import eu.lestard.fluxfx.View;
-import eu.lestard.structuredlist.actions.CompleteItemAction;
-import eu.lestard.structuredlist.actions.EditItemAction;
-import eu.lestard.structuredlist.actions.NewItemAction;
-import eu.lestard.structuredlist.actions.RemoveItemAction;
-import eu.lestard.structuredlist.stores.items.Item;
-import eu.lestard.structuredlist.stores.items.ItemStore;
+import eu.lestard.structuredlist.features.items.actions.CompleteItemAction;
+import eu.lestard.structuredlist.features.items.actions.EditItemAction;
+import eu.lestard.structuredlist.features.items.actions.NewItemAction;
+import eu.lestard.structuredlist.features.items.actions.RemoveItemAction;
+import eu.lestard.structuredlist.features.items.Item;
+import eu.lestard.structuredlist.features.items.ItemStore;
 import eu.lestard.structuredlist.util.DialogUtil;
 import eu.lestard.structuredlist.util.RecursiveTreeItem;
 import javafx.beans.binding.Bindings;

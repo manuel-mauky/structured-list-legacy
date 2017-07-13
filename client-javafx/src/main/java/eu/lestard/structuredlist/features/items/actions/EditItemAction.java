@@ -1,4 +1,4 @@
-package eu.lestard.structuredlist.actions;
+package eu.lestard.structuredlist.features.items.actions;
 
 import eu.lestard.fluxfx.Action;
 

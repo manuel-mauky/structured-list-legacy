@@ -1,4 +1,4 @@
-package eu.lestard.structuredlist.stores.items;
+package eu.lestard.structuredlist.features.items;
 
 import eu.lestard.structuredlist.eventsourcing.Event;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
@@ -10,8 +10,6 @@ import eu.lestard.structuredlist.eventsourcing.events.ItemTextChangedEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 public class RootItemFactory {
