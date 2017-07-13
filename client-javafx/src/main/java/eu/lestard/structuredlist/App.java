@@ -5,9 +5,11 @@ import eu.lestard.fluxfx.ViewLoader;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
 import eu.lestard.structuredlist.eventsourcing.InMemoryEventStore;
 import eu.lestard.structuredlist.eventsourcing.JsonEventStore;
-import eu.lestard.structuredlist.features.system.SystemStore;
+import eu.lestard.structuredlist.features.config.ConfigOptions;
+import eu.lestard.structuredlist.features.config.ConfigStore;
 import eu.lestard.structuredlist.features.items.Item;
 import eu.lestard.structuredlist.features.items.RootItemFactory;
+import eu.lestard.structuredlist.features.system.SystemStore;
 import eu.lestard.structuredlist.ui.main.MainView;
 import eu.lestard.structuredlist.util.DialogUtil;
 import javafx.application.Application;
@@ -23,7 +25,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -41,8 +42,10 @@ public class App extends Application {
 		DialogUtil.setApplicationWindow(stage);
 		
 		context.getInstance(SystemStore.class); // instantiate SystemStore
+		ConfigStore configStore = context.getInstance(ConfigStore.class);
+		configStore.registerDefaultOptions();
 
-        final Optional<File> file = getStorageFile();
+        final Optional<File> file = getStorageFile(configStore);
 
         if(file.isPresent()) {
 
@@ -109,10 +112,9 @@ public class App extends Application {
 
 
 
-    public static Optional<File> getStorageFile() {
-        final String userhome = System.getProperty("user.home");
+    public static Optional<File> getStorageFile(ConfigStore configStore) {
 
-        final Path appDirPath = Paths.get(userhome, ".structure-list");
+        final Path appDirPath = configStore.getOptionValue(ConfigOptions.appDir);
 
         final File appDirFile = appDirPath.toFile();
 
@@ -125,7 +127,9 @@ public class App extends Application {
             }
         }
 
-        final Path storagePath = appDirPath.resolve("storage.json");
+		String storageFileName = configStore.getOptionValue(ConfigOptions.storageFileName);
+
+		final Path storagePath = appDirPath.resolve(storageFileName);
 
         final File storageFile = storagePath.toFile();
 
