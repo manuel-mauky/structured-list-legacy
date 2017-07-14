@@ -56,7 +56,10 @@ public class Item {
         subItems.addListener((ListChangeListener<Item>) change -> {
             while (change.next()) {
                 if (change.wasAdded()) {
-                    change.getAddedSubList().forEach(item -> item.setParent(Item.this));
+                    change.getAddedSubList().forEach(item -> {
+                    	item.getParent().ifPresent(oldParent -> oldParent.removeSubItem(item));
+						item.setParent(Item.this);
+					});
                 }
 
                 if (change.wasRemoved()) {

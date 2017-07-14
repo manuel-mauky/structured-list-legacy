@@ -1,8 +1,10 @@
 package eu.lestard.structuredlist.features.items;
 
 import eu.lestard.fluxfx.Store;
+import eu.lestard.structuredlist.eventsourcing.events.ItemMovedEvent;
 import eu.lestard.structuredlist.features.items.actions.CompleteItemAction;
 import eu.lestard.structuredlist.features.items.actions.EditItemAction;
+import eu.lestard.structuredlist.features.items.actions.MoveItemAction;
 import eu.lestard.structuredlist.features.items.actions.NewItemAction;
 import eu.lestard.structuredlist.features.items.actions.RemoveItemAction;
 import eu.lestard.structuredlist.eventsourcing.EventStore;
@@ -28,7 +30,48 @@ public class ItemStore extends Store {
         subscribe(RemoveItemAction.class, this::processRemoveItem);
 		subscribe(EditItemAction.class, this::processEditItem);
 		subscribe(CompleteItemAction.class, this::processCompleteItem);
+		subscribe(MoveItemAction.class, this::processMoveItem);
     }
+
+    private void processMoveItem(MoveItemAction action) {
+		String itemId = action.getItemId();
+		String newParentId = action.getNewParentId();
+
+		if(itemId.equals(newParentId)) {
+			return;
+		}
+
+		root.findRecursive(itemId).ifPresent(item -> {
+			root.findRecursive(newParentId).ifPresent(newParent -> {
+
+				if(canBeMoved(item, newParentId)) {
+					newParent.addSubItem(item);
+
+					eventStore.push(new ItemMovedEvent(itemId, newParentId));
+				}
+			});
+		});
+	}
+
+	public boolean canBeMoved(Item item, String newParentId) {
+    	if(item.getId().equals(newParentId)) {
+    		return false;
+		}
+
+		// check whether the new parent is already set as the current parent.
+		if(item.getParent().map(parent -> parent.getId().equals(newParentId)).orElse(false)) {
+    		return false;
+		}
+
+		return !item.findRecursive(newParentId)
+				.isPresent();
+	}
+
+	public boolean canBeMoved(String itemId, String newParentId) {
+    	return root.findRecursive(itemId)
+				.map(item -> canBeMoved(item, newParentId))
+				.orElse(false);
+	}
 
 	private void processCompleteItem(CompleteItemAction action) {
 		String itemId = action.getItemId();
