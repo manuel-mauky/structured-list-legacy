@@ -1,27 +1,32 @@
 package eu.lestard.structuredlist.ui.itemoverview;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import eu.lestard.fluxfx.View;
+import eu.lestard.structuredlist.features.items.Item;
+import eu.lestard.structuredlist.features.items.ItemStore;
 import eu.lestard.structuredlist.features.items.actions.CompleteItemAction;
 import eu.lestard.structuredlist.features.items.actions.EditItemAction;
 import eu.lestard.structuredlist.features.items.actions.MoveItemAction;
 import eu.lestard.structuredlist.features.items.actions.NewItemAction;
 import eu.lestard.structuredlist.features.items.actions.RemoveItemAction;
-import eu.lestard.structuredlist.features.items.Item;
-import eu.lestard.structuredlist.features.items.ItemStore;
 import eu.lestard.structuredlist.util.DialogUtil;
 import eu.lestard.structuredlist.util.RecursiveTreeItem;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableRow;
+import javafx.scene.control.TreeTableView;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.util.Callback;
 
 import java.util.Optional;
 
@@ -47,81 +52,115 @@ public class ItemOverviewView implements View {
     public void initialize() {
         final TreeItem<Item> rootTreeItem = new RecursiveTreeItem<>(itemStore.getRootItem(), Item::getOpenSubItems);
         itemTreeView.setRoot(rootTreeItem);
-		
-		
+
 		itemTreeView.setOnMouseClicked(event -> {
 			if (event.getClickCount() > 1) {
-				editItem();
+				Optional.ofNullable(itemTreeView.getSelectionModel().getSelectedItem())
+					.map(TreeItem::getValue)
+					.ifPresent(this::editItem);
 			}
 		});
 
+		ContextMenu treeViewContextMenu = new ContextMenu();
+		MenuItem addRootMenuItem = new MenuItem("Add Item");
+		addRootMenuItem.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PLUS));
+		addRootMenuItem.setOnAction(event -> addRootItem());
+		treeViewContextMenu.getItems().add(addRootMenuItem);
 
-		itemTreeView.setRowFactory(new Callback<TreeTableView<Item>, TreeTableRow<Item>>() {
-			@Override
-			public TreeTableRow<Item> call(TreeTableView<Item> param) {
-				TreeTableRow<Item> row = new TreeTableRow<>();
+		itemTreeView.setContextMenu(treeViewContextMenu);
 
-				row.setOnDragDetected(event -> {
-					TreeItem<Item> selectedItem = itemTreeView.getSelectionModel().getSelectedItem();
 
-					if(selectedItem != null) {
-						Dragboard dragboard = itemTreeView.startDragAndDrop(TransferMode.ANY);
+		itemTreeView.setRowFactory(param -> {
 
-						dragboard.setDragView(row.snapshot(null, null));
+			ContextMenu rowContextMenu = new ContextMenu();
+			MenuItem addMenuItem = new MenuItem("Add Item");
+			addMenuItem.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PLUS));
+			MenuItem editMenuItem = new MenuItem("Show/Edit Item");
+			editMenuItem.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL));
+			MenuItem completeMenuItem = new MenuItem("Complete");
+			completeMenuItem.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.CHECK));
+			MenuItem removeMenuItem = new MenuItem("Remove Item");
+			removeMenuItem.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.TRASH));
 
-						ClipboardContent content = new ClipboardContent();
-						content.putString(selectedItem.getValue().getId());
+			rowContextMenu.getItems().addAll(addMenuItem, editMenuItem, completeMenuItem, removeMenuItem);
 
-						dragboard.setContent(content);
+			TreeTableRow<Item> row = new TreeTableRow<Item>() {
 
-						event.consume();
+				@Override
+				protected void updateItem(Item item, boolean empty) {
+					super.updateItem(item, empty);
+
+					if(empty) {
+						setContextMenu(null);
+					} else {
+						setContextMenu(rowContextMenu);
 					}
-				});
+				}
+			};
 
 
-				row.setOnDragOver(event -> {
-					Dragboard dragboard = event.getDragboard();
+			addMenuItem.setOnAction(event -> addSubItem(row.getItem()));
+			editMenuItem.setOnAction(event -> editItem(row.getItem()));
+			completeMenuItem.setOnAction(event -> completeItem(row.getItem()));
+			removeMenuItem.setOnAction(event -> removeItem(row.getItem()));
 
-					if(dragboard.hasString()) {
-						String movedItemId = dragboard.getString();
+			row.setOnDragDetected(event -> {
+				final Item item = row.getItem();
 
-						Item item = row.getTreeItem().getValue();
+				if(item != null) {
+					Dragboard dragboard = itemTreeView.startDragAndDrop(TransferMode.ANY);
 
-						event.acceptTransferModes(TransferMode.MOVE);
+					dragboard.setDragView(row.snapshot(null, null));
 
-						if(item != null) {
-							if(! itemStore.canBeMoved(movedItemId, item.getId())) {
-								event.acceptTransferModes(TransferMode.NONE);
-							};
+					ClipboardContent content = new ClipboardContent();
+					content.putString(item.getId());
+
+					dragboard.setContent(content);
+					event.consume();
+				}
+			});
+
+
+			row.setOnDragOver(event -> {
+				Dragboard dragboard = event.getDragboard();
+
+				if(dragboard.hasString()) {
+					String movedItemId = dragboard.getString();
+
+					Item item = row.getTreeItem().getValue();
+
+					event.acceptTransferModes(TransferMode.MOVE);
+
+					if(item != null) {
+						if(! itemStore.canBeMoved(movedItemId, item.getId())) {
+							event.acceptTransferModes(TransferMode.NONE);
 						}
-
 					}
+				}
 
-					event.consume();
-				});
+				event.consume();
+			});
 
-				row.setOnDragDropped(event -> {
+			row.setOnDragDropped(event -> {
+				Dragboard dragboard = event.getDragboard();
 
-					Dragboard dragboard = event.getDragboard();
+				boolean success = false;
 
-					boolean success = false;
+				if (dragboard.hasString()) {
+					String movedItemId = dragboard.getString();
 
-					if(dragboard.hasString()) {
-							String movedItemId = dragboard.getString();
+					final Item value = row.getTreeItem().getValue();
+					String newParentId = value.getId();
 
-							String newParentId = row.getTreeItem().getValue().getId();
+					publishAction(new MoveItemAction(movedItemId, newParentId));
+					success = true;
+				}
 
-							publishAction(new MoveItemAction(movedItemId, newParentId));
+				event.setDropCompleted(success);
+				event.consume();
+			});
 
-							success = true;
-					}
-
-					event.setDropCompleted(success);
-					event.consume();
-				});
-
-				return row;
-			}
+			return row;
 		});
 
         titleColumn.setCellValueFactory(param ->
@@ -132,38 +171,35 @@ public class ItemOverviewView implements View {
 				createItemsColumnBinding(
 						param.getValue().getValue()));
     }
-	
-	
-	public void editItem() {
-		Optional.ofNullable(itemTreeView.getSelectionModel().getSelectedItem())
-				.map(TreeItem::getValue)
-				.ifPresent(item -> {
-					ItemInputDialog dialog = new ItemInputDialog("Show/Edit Item", item.getText());
 
-					DialogUtil.initDialogPositioning(dialog);
-
-					dialog.showAndWait().ifPresent(newText ->
-							publishAction(new EditItemAction(item.getId(), newText)));
-				});
-		
-	}
-
-    public void addItem() {
+	private void addSubItem(Item parent) {
 		ItemInputDialog dialog = new ItemInputDialog("Add new Item");
 		DialogUtil.initDialogPositioning(dialog);
-		
-        dialog.showAndWait().ifPresent(text ->
-				getSelectedItemId().ifPresent(parentId ->
-						publishAction(new NewItemAction(parentId, text))));
-    }
 
-    private Optional<String> getSelectedItemId() {
-        return Optional.ofNullable(itemTreeView.getSelectionModel().getSelectedItem())
-                .map(TreeItem::getValue)
-                .map(Item::getId);
-    }
+		dialog.showAndWait().ifPresent(text ->
+				publishAction(new NewItemAction(parent.getId(), text)));
+	}
 
-    public void removeItem() {
+
+	public void editItem(Item item) {
+		ItemInputDialog dialog = new ItemInputDialog("Show/Edit Item", item.getText());
+
+		DialogUtil.initDialogPositioning(dialog);
+
+		dialog.showAndWait().ifPresent(newText ->
+				publishAction(new EditItemAction(item.getId(), newText)));
+
+	}
+
+    public void addRootItem() {
+		ItemInputDialog dialog = new ItemInputDialog("Add new Item");
+		DialogUtil.initDialogPositioning(dialog);
+
+		dialog.showAndWait().ifPresent(text ->
+				publishAction(new NewItemAction(text)));
+	}
+
+    public void removeItem(Item item) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Remove Item");
         alert.setHeaderText("Remove the selected Item");
@@ -173,12 +209,11 @@ public class ItemOverviewView implements View {
 
         alert.showAndWait()
                 .filter(button -> button.equals(ButtonType.OK))
-                .flatMap(button -> getSelectedItemId())
-                .ifPresent(itemId -> publishAction(new RemoveItemAction(itemId)));
+                .ifPresent(buttonType -> publishAction(new RemoveItemAction(item.getId())));
     }
 
-	public void completeItem() {
-		getSelectedItemId().ifPresent(itemId -> publishAction(new CompleteItemAction(itemId)));
+	public void completeItem(Item item) {
+    	publishAction(new CompleteItemAction(item.getId()));
 	}
 
     private static ObservableStringValue createTitleColumnBinding(Item item) {

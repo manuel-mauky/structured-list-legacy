@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.jensd.fx.glyphs.fontawesome.*?>
-<?import de.jensd.fx.glyphs.materialicons.*?>
-<?import de.jensd.fx.glyphs.materialdesignicons.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
-
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.AnchorPane?>
 <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eu.lestard.structuredlist.ui.itemoverview.ItemOverviewView">
    <children>
       <TreeTableView fx:id="itemTreeView" editable="true" showRoot="false" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -20,29 +13,6 @@
          <columnResizePolicy>
             <TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
-         <contextMenu>
-            <ContextMenu>
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#addItem" text="Add Item">
-                     <graphic>
-                        <FontAwesomeIconView glyphName="PLUS" />
-                     </graphic></MenuItem>
-                <MenuItem mnemonicParsing="false" onAction="#editItem" text="Show/Edit Item">
-                     <graphic>
-                        <FontAwesomeIconView glyphName="PENCIL" />
-                     </graphic></MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#completeItem" text="Complete">
-                     <graphic>
-                        <FontAwesomeIconView glyphName="CHECK" />
-                     </graphic></MenuItem>
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" onAction="#removeItem" text="Remove Item">
-                     <graphic>
-                        <FontAwesomeIconView glyphName="TRASH" />
-                     </graphic></MenuItem>
-              </items>
-            </ContextMenu>
-         </contextMenu>
       </TreeTableView>
    </children>
 </AnchorPane>
